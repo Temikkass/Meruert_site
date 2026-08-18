@@ -283,6 +283,23 @@
     background-image: var(--gradient-radial-glow);
   }
 
+  /* Keyboard skip link (components/navigation/SkipLink.tsx).
+     Written as one rule pair here rather than as `hidden` + `focus:` utility
+     classes so the cascade is explicit and local: `:focus` both outranks the
+     base rule on specificity and follows it in source order, so the revealed
+     state cannot be reordered out from under it by utility sorting.
+     Transforming rather than moving `top` keeps the reveal off the layout
+     path — the element's box never changes, only its paint position. */
+  .skip-link {
+    top: 1rem;
+    transform: translateY(calc(-100% - 2rem));
+    transition: transform var(--duration-fast, 150ms) var(--ease-standard, ease);
+  }
+
+  .skip-link:focus {
+    transform: translateY(0);
+  }
+
   /* Editorial paragraph measure — caps line length for comfortable reading
      regardless of container width. Applied by <Paragraph> (see
      components/shared/content). */

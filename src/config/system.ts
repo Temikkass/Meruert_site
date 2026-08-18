@@ -46,3 +46,24 @@ export const errorCopy: SystemPageCopy = {
   },
   action: { en: "Try again", ru: "Попробовать снова", kk: "Қайталап көру" },
 };
+
+/** Label for the keyboard skip link (components/navigation/SkipLink.tsx). */
+export const skipLinkLabel: LocalizedText = {
+  en: "Skip to content",
+  ru: "Перейти к содержимому",
+  kk: "Мазмұнға өту",
+};
+
+/** Accessible labels for the theme toggle (components/navigation/ThemeToggle.tsx). */
+export const themeToggleLabels: Record<"toLight" | "toDark", LocalizedText> = {
+  toLight: {
+    en: "Switch to light theme",
+    ru: "Переключить на светлую тему",
+    kk: "Ашық тақырыпқа ауысу",
+  },
+  toDark: {
+    en: "Switch to dark theme",
+    ru: "Переключить на тёмную тему",
+    kk: "Күңгірт тақырыпқа ауысу",
+  },
+};

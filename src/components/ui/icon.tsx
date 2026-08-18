@@ -39,6 +39,8 @@ import {
   AlertCircle,
   CheckCircle2,
   Info,
+  Sun,
+  Moon,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -70,6 +72,8 @@ const iconMap: Record<string, LucideIcon> = {
   error: AlertCircle,
   success: CheckCircle2,
   info: Info,
+  sun: Sun,
+  moon: Moon,
 };
 
 export type IconSize = "xs" | "sm" | "md" | "lg" | "xl";

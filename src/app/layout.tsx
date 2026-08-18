@@ -2,10 +2,12 @@ import type { Metadata, Viewport } from "next";
 import { AppProviders } from "@/providers";
 import { PageTransition } from "@/providers/page-transition";
 import { Navbar } from "@/components/navigation/Navbar";
+import { SkipLink } from "@/components/navigation/SkipLink";
 import { Footer } from "@/components/layout/Footer";
 import { fontVariables } from "@/lib/fonts";
 import { createDefaultMetadata } from "@/lib/metadata";
 import { buildPersonSchema, serializeJsonLd } from "@/lib/json-ld";
+import { SKIP_TARGET_ID } from "@/lib/constants";
 import "./globals.css";
 
 /**
@@ -20,6 +22,9 @@ import "./globals.css";
  *    context is available everywhere without per-page wiring.
  *  - Site-default metadata + Person JSON-LD, so even an empty page shipped
  *    right now would already pass basic SEO/structured-data checks.
+ *  - `<SkipLink>` as the first focusable element in the document, with its
+ *    target id on the wrapper around {children} — so every page gets a
+ *    working "bypass blocks" affordance without each page.tsx opting in.
  *  - `<Navbar>` and `<Footer>`, rendered ONCE here rather than by each
  *    page — moved from per-page in the motion-design pass specifically so
  *    they stay visually stable (no fade/reset) across the page transitions
@@ -64,8 +69,14 @@ export default function RootLayout({
       </head>
       <body>
         <AppProviders>
+          <SkipLink locale="en" />
           <Navbar locale="en" />
-          <PageTransition>{children}</PageTransition>
+          {/* tabIndex={-1} so the skip link actually moves focus here, not
+              just the viewport — a jump target that is not focusable leaves
+              the next Tab back at the top of the nav in several browsers. */}
+          <div id={SKIP_TARGET_ID} tabIndex={-1} className="outline-none">
+            <PageTransition>{children}</PageTransition>
+          </div>
           <Footer locale="en" />
         </AppProviders>
       </body>

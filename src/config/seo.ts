@@ -1,6 +1,13 @@
 /**
  * config/seo.ts
  * ----------------------------------------------------------------------------
+ * `baseUrl` is read from NEXT_PUBLIC_SITE_URL when present, falling back to
+ * the literal below. Every absolute URL the site emits derives from it —
+ * `metadataBase`, each page's canonical, Open Graph image resolution,
+ * sitemap.xml and robots.txt — so a deploy that forgets the variable
+ * publishes a sitemap full of the placeholder domain. Setting it in the
+ * hosting provider's env is the last required launch step; see README.
+ *
  * `siteSeo` feeds the root layout's default metadata (see app/layout.tsx)
  * and lib/metadata.ts#createMetadata(). `pageSeo` entries are looked up by
  * path when a specific page wants to override the default title/description
@@ -18,10 +25,19 @@ import { aboutContent } from "./about";
 import { contactPageContent } from "./contact-page";
 import { privacyPolicyContent } from "./legal";
 
+/** Replace with the real production domain, or set NEXT_PUBLIC_SITE_URL. */
+const FALLBACK_BASE_URL = "https://www.replace-with-domain.com";
+
+/** Trailing slashes are stripped so `${baseUrl}${path}` never doubles up. */
+function resolveBaseUrl(): string {
+  const fromEnv = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  const value = fromEnv && fromEnv.length > 0 ? fromEnv : FALLBACK_BASE_URL;
+  return value.replace(/\/+$/, "");
+}
+
 export const siteSeo: SiteSeo = {
   siteName: person.fullName,
-  // Replace with the real production domain before deploying
-  baseUrl: "https://www.replace-with-domain.com",
+  baseUrl: resolveBaseUrl(),
   defaultTitle: `${person.fullName} — Financial Literacy, Tours & Language Courses`,
   titleTemplate: `%s — ${person.fullName}`,
   defaultDescription:

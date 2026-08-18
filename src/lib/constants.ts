@@ -23,3 +23,10 @@ export const HEADER_OFFSET = 88;
 
 /** Default viewport margin used by scroll-reveal animations (components/animations) */
 export const REVEAL_VIEWPORT_MARGIN = "-10% 0px -10% 0px";
+
+/**
+ * id of the element the skip link jumps to. Applied by app/layout.tsx to the
+ * wrapper around {children}, so every page gets a valid skip target without
+ * each page.tsx having to remember to add one.
+ */
+export const SKIP_TARGET_ID = "main-content";

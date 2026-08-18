@@ -70,7 +70,7 @@ export function Hero({ content, locale = "en" }: { content: HeroContent; locale?
             <TextReveal
               text={content.headline[locale]}
               as="h1"
-              className="justify-center text-display-xl font-display font-semibold leading-display tracking-display text-ink lg:justify-start"
+              className="text-display-xl font-display font-semibold leading-display tracking-display text-ink"
             />
 
             <Reveal variants={fadeUp} delay={0.15}>

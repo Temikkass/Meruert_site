@@ -14,21 +14,25 @@
  * border — the "Transparent/Blur Navigation" pairing from the brief,
  * implemented as two states of one bar rather than two components.
  *
- * ACTIVE SECTION INDICATOR / SCROLL SPY: `useActiveSection` (built in the
- * architecture phase) drives which NavLink shows the active underline.
- * Only anchor-style items participate in scroll-spy — project page links
- * are highlighted by route match instead, via `usePathname`.
+ * ACTIVE LINK: highlighted by route match via `usePathname`.
+ *
+ * This used to also run a scroll-spy (`useActiveSection`) over any nav item
+ * whose href started with "/#". No item in config/navigation.ts has ever
+ * been an anchor — the nav is four real routes — so the filter always
+ * produced an empty array and the hook observed nothing. Removed rather
+ * than left in place looking load-bearing. In-page anchors elsewhere on the
+ * site (the Hero CTAs' /#projects and /#contact) are unaffected: those go
+ * through useAnchorClick + lib/scroll.ts, not through this.
  */
 
-import { useMemo } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { primaryNav } from "@/config/navigation";
 import { person } from "@/config/person";
 import { useScrolled } from "@/hooks/use-scrolled";
-import { useActiveSection } from "@/hooks/use-active-section";
 import { NavLink } from "./NavLink";
 import { MobileMenu } from "./MobileMenu";
+import { ThemeToggle } from "./ThemeToggle";
 import { Container } from "@/components/layout/Container";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/types";
@@ -36,12 +40,6 @@ import type { Locale } from "@/types";
 export function Navbar({ locale = "en" }: { locale?: Locale }) {
   const scrolled = useScrolled();
   const pathname = usePathname();
-
-  const anchorSectionIds = useMemo(
-    () => primaryNav.filter((item) => item.href.startsWith("/#")).map((item) => item.href.replace("/#", "")),
-    []
-  );
-  const activeSectionId = useActiveSection(anchorSectionIds);
 
   return (
     <header
@@ -58,16 +56,17 @@ export function Navbar({ locale = "en" }: { locale?: Locale }) {
           </Link>
 
           <div className="hidden items-center gap-8 md:flex">
-            {primaryNav.map((item) => {
-              const isAnchor = item.href.startsWith("/#");
-              const active = isAnchor
-                ? activeSectionId === item.href.replace("/#", "")
-                : pathname === item.href;
-              return <NavLink key={item.href} item={item} locale={locale} active={active} />;
-            })}
+            {primaryNav.map((item) => (
+              <NavLink key={item.href} item={item} locale={locale} active={pathname === item.href} />
+            ))}
           </div>
 
-          <MobileMenu locale={locale} />
+          {/* Controls sit together on the right at every breakpoint; only the
+              menu trigger itself is mobile-only. */}
+          <div className="flex items-center gap-1">
+            <ThemeToggle locale={locale} />
+            <MobileMenu locale={locale} />
+          </div>
         </nav>
       </Container>
     </header>
