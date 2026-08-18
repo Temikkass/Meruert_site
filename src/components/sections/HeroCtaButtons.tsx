@@ -13,6 +13,7 @@ import type { Route } from "next";
 import { Button } from "@/components/ui/button";
 import { Magnetic } from "@/components/animations/Magnetic";
 import { useAnchorClick } from "@/hooks/use-anchor-click";
+import { localizedPath } from "@/lib/routes";
 import type { Link as ConfigLink, Locale } from "@/types";
 
 export function HeroCtaButtons({
@@ -31,13 +32,13 @@ export function HeroCtaButtons({
     <>
       <Magnetic strength={10}>
         <Button asChild size="lg" variant="cta">
-          <Link href={primaryCta.href as Route} onClick={onPrimaryClick}>
+          <Link href={localizedPath(primaryCta.href, locale) as Route} onClick={onPrimaryClick}>
             {primaryCta.label[locale]}
           </Link>
         </Button>
       </Magnetic>
       <Button asChild size="lg" variant="outline">
-        <Link href={secondaryCta.href as Route} onClick={onSecondaryClick}>
+        <Link href={localizedPath(secondaryCta.href, locale) as Route} onClick={onSecondaryClick}>
           {secondaryCta.label[locale]}
         </Link>
       </Button>

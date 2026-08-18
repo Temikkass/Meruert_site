@@ -3,15 +3,17 @@ import { PageHeader } from "@/components/sections/PageHeader";
 import { ContactChannelsSection } from "@/components/sections/ContactChannelsSection";
 import { createMetadata } from "@/lib/metadata";
 import { pageSeo } from "@/config/seo";
+import { assertLocale } from "@/lib/locale";
 import { contactPageContent } from "@/config/contact-page";
 
-export function generateMetadata(): Metadata {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const locale = assertLocale((await params).locale);
   const seo = pageSeo["/contact"];
-  return seo ? createMetadata(seo) : {};
+  return seo ? createMetadata(seo, locale) : {};
 }
 
-export default function ContactPage() {
-  const locale = "en" as const;
+export default async function ContactPage({ params }: { params: Promise<{ locale: string }> }) {
+  const locale = assertLocale((await params).locale);
 
   return (
     <main>

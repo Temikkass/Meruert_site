@@ -21,16 +21,18 @@ import { ProjectCtaSection } from "@/components/sections/ProjectCtaSection";
 import { createMetadata } from "@/lib/metadata";
 import { buildOrganizationSchema, serializeJsonLd } from "@/lib/json-ld";
 import { pageSeo } from "@/config/seo";
+import { assertLocale } from "@/lib/locale";
 import { travelProject } from "@/config/travel";
 import { travelPageContent } from "@/config/travel-page";
 
-export function generateMetadata(): Metadata {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const locale = assertLocale((await params).locale);
   const seo = pageSeo[`/${travelProject.slug}`];
-  return seo ? createMetadata(seo) : {};
+  return seo ? createMetadata(seo, locale) : {};
 }
 
-export default function TravelPage() {
-  const locale = "en" as const;
+export default async function TravelPage({ params }: { params: Promise<{ locale: string }> }) {
+  const locale = assertLocale((await params).locale);
   const [toursOffering, languageOffering, campsOffering] = travelProject.offerings;
   const organizationSchema = buildOrganizationSchema(travelProject);
 

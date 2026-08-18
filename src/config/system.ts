@@ -67,3 +67,10 @@ export const themeToggleLabels: Record<"toLight" | "toDark", LocalizedText> = {
     kk: "Күңгірт тақырыпқа ауысу",
   },
 };
+
+/** Accessible label for the language switcher's trigger. */
+export const languageSwitcherLabel: LocalizedText = {
+  en: "Change language",
+  ru: "Сменить язык",
+  kk: "Тілді ауыстыру",
+};

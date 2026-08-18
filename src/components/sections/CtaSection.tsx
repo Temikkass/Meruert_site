@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { fadeUp } from "@/lib/animations/variants";
 import { financialProject } from "@/config/financial";
 import { travelProject } from "@/config/travel";
+import { localizedPath } from "@/lib/routes";
 import type { Locale, SectionCopy } from "@/types";
 
 export function CtaSection({ content, locale = "en" }: { content: SectionCopy; locale?: Locale }) {
@@ -41,11 +42,11 @@ export function CtaSection({ content, locale = "en" }: { content: SectionCopy; l
           <Stack direction="row" gap={4} justify="center" className="mt-8 flex-wrap">
             <Magnetic strength={10}>
               <Button asChild size="lg" variant="cta">
-                <Link href={`/${financialProject.slug}` as Route}>{financialProject.name[locale]}</Link>
+                <Link href={localizedPath(`/${financialProject.slug}`, locale) as Route}>{financialProject.name[locale]}</Link>
               </Button>
             </Magnetic>
             <Button asChild size="lg" variant="outline">
-              <Link href={`/${travelProject.slug}` as Route}>{travelProject.name[locale]}</Link>
+              <Link href={localizedPath(`/${travelProject.slug}`, locale) as Route}>{travelProject.name[locale]}</Link>
             </Button>
           </Stack>
         </Reveal>

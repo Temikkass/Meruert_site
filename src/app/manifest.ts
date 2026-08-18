@@ -20,7 +20,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: siteSeo.siteName,
     short_name: person.fullName.split(" ")[0] ?? siteSeo.siteName,
-    description: siteSeo.defaultDescription,
+    description: siteSeo.defaultDescription[defaultLocale],
     lang: htmlLang[defaultLocale],
     start_url: "/",
     display: "standalone",

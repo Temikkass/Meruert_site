@@ -27,14 +27,17 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import type { Route } from "next";
 import { primaryNav } from "@/config/navigation";
 import { person } from "@/config/person";
 import { useScrolled } from "@/hooks/use-scrolled";
 import { NavLink } from "./NavLink";
 import { MobileMenu } from "./MobileMenu";
 import { ThemeToggle } from "./ThemeToggle";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 import { Container } from "@/components/layout/Container";
 import { cn } from "@/lib/utils";
+import { localizedPath } from "@/lib/routes";
 import type { Locale } from "@/types";
 
 export function Navbar({ locale = "en" }: { locale?: Locale }) {
@@ -51,7 +54,7 @@ export function Navbar({ locale = "en" }: { locale?: Locale }) {
     >
       <Container>
         <nav className="flex h-button-lg items-center justify-between" aria-label="Primary">
-          <Link href="/" className="font-display text-body-lg font-semibold text-ink">
+          <Link href={localizedPath("/", locale) as Route} className="font-display text-body-lg font-semibold text-ink">
             {person.fullName}
           </Link>
 
@@ -64,6 +67,7 @@ export function Navbar({ locale = "en" }: { locale?: Locale }) {
           {/* Controls sit together on the right at every breakpoint; only the
               menu trigger itself is mobile-only. */}
           <div className="flex items-center gap-1">
+            <LanguageSwitcher locale={locale} />
             <ThemeToggle locale={locale} />
             <MobileMenu locale={locale} />
           </div>

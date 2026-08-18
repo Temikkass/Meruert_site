@@ -11,17 +11,19 @@
  * navigation. Callers never need to know which kind of href they were
  * given.
  *
- * `active` drives the underline-on-active-section treatment fed by
- * useActiveSection in the parent Navbar — kept as a prop rather than
- * computed here so this component stays a plain, cheap-to-render item and
- * the (more expensive) IntersectionObserver logic lives in exactly one
- * place.
+ * `active` drives the underline treatment and is computed by the parent
+ * Navbar from the current route, so this component stays a plain,
+ * cheap-to-render item.
+ *
+ * Route hrefs are run through `localizedPath` — config stores locale-free
+ * paths ("/about"), and every real URL carries a `/{locale}` prefix.
  */
 
 import Link from "next/link";
 import type { Route } from "next";
 import { cn } from "@/lib/utils";
 import { scrollToSection } from "@/lib/scroll";
+import { localizedPath } from "@/lib/routes";
 import { HEADER_OFFSET } from "@/lib/constants";
 import type { NavItem, Locale } from "@/types";
 
@@ -61,7 +63,7 @@ export function NavLink({ item, locale, active = false, className, onNavigate }:
   }
 
   return (
-    <Link href={item.href as Route} className={sharedClassName} onClick={onNavigate}>
+    <Link href={localizedPath(item.href, locale) as Route} className={sharedClassName} onClick={onNavigate}>
       {item.label[locale]}
     </Link>
   );

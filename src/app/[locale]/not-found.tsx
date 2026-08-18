@@ -1,9 +1,11 @@
 import Link from "next/link";
+import type { Route } from "next";
 import { Container } from "@/components/layout/Container";
 import { Button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/shared/content/Eyebrow";
 import { notFoundCopy } from "@/config/system";
 import { defaultLocale } from "@/lib/locale";
+import { localizedPath } from "@/lib/routes";
 
 /**
  * app/not-found.tsx
@@ -30,7 +32,7 @@ export default function NotFound() {
           </h1>
           <p className="text-body-lg leading-body text-ink-muted">{notFoundCopy.body[locale]}</p>
           <Button asChild size="lg" className="mt-2">
-            <Link href="/">{notFoundCopy.action[locale]}</Link>
+            <Link href={localizedPath("/", locale) as Route}>{notFoundCopy.action[locale]}</Link>
           </Button>
         </div>
       </Container>

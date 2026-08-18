@@ -26,6 +26,7 @@ import { FaqPreviewSection } from "@/components/sections/FaqPreviewSection";
 import { CtaSection } from "@/components/sections/CtaSection";
 import { createMetadata } from "@/lib/metadata";
 import { pageSeo } from "@/config/seo";
+import { assertLocale } from "@/lib/locale";
 import { homeContent } from "@/config/home";
 
 const TestimonialsSection = dynamic(
@@ -38,13 +39,14 @@ const GalleryPreviewSection = dynamic(
   { ssr: true }
 );
 
-export function generateMetadata(): Metadata {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const locale = assertLocale((await params).locale);
   const homePageSeo = pageSeo["/"];
-  return homePageSeo ? createMetadata(homePageSeo) : {};
+  return homePageSeo ? createMetadata(homePageSeo, locale) : {};
 }
 
-export default function HomePage() {
-  const locale = "en" as const;
+export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
+  const locale = assertLocale((await params).locale);
 
   return (
     <main>

@@ -20,16 +20,18 @@ import { ProjectCtaSection } from "@/components/sections/ProjectCtaSection";
 import { createMetadata } from "@/lib/metadata";
 import { buildOrganizationSchema, serializeJsonLd } from "@/lib/json-ld";
 import { pageSeo } from "@/config/seo";
+import { assertLocale } from "@/lib/locale";
 import { financialProject, financialLearningFormats, financialBenefits } from "@/config/financial";
 import { financialPageContent } from "@/config/financial-page";
 
-export function generateMetadata(): Metadata {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const locale = assertLocale((await params).locale);
   const seo = pageSeo[`/${financialProject.slug}`];
-  return seo ? createMetadata(seo) : {};
+  return seo ? createMetadata(seo, locale) : {};
 }
 
-export default function FinancialLiteracyPage() {
-  const locale = "en" as const;
+export default async function FinancialLiteracyPage({ params }: { params: Promise<{ locale: string }> }) {
+  const locale = assertLocale((await params).locale);
   const organizationSchema = buildOrganizationSchema(financialProject);
 
   return (

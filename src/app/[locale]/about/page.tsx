@@ -19,16 +19,18 @@ import { GalleryPreviewSection } from "@/components/sections/GalleryPreviewSecti
 import { CtaSection } from "@/components/sections/CtaSection";
 import { createMetadata } from "@/lib/metadata";
 import { pageSeo } from "@/config/seo";
+import { assertLocale } from "@/lib/locale";
 import { aboutContent } from "@/config/about";
 import { missionValues } from "@/config/mission-values";
 
-export function generateMetadata(): Metadata {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const locale = assertLocale((await params).locale);
   const seo = pageSeo["/about"];
-  return seo ? createMetadata(seo) : {};
+  return seo ? createMetadata(seo, locale) : {};
 }
 
-export default function AboutPage() {
-  const locale = "en" as const;
+export default async function AboutPage({ params }: { params: Promise<{ locale: string }> }) {
+  const locale = assertLocale((await params).locale);
 
   return (
     <main>

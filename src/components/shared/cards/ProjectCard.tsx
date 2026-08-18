@@ -22,6 +22,7 @@ import type { Route } from "next";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
+import { localizedPath } from "@/lib/routes";
 import type { Locale, Project } from "@/types";
 
 export interface ProjectCardProps {
@@ -60,7 +61,7 @@ export function ProjectCard({ project, ctaLabel, locale = "en" }: ProjectCardPro
       <p className="mt-2 text-body-md text-ink-muted leading-body">{project.tagline[locale]}</p>
 
       <Button asChild variant="text" className="mt-6">
-        <Link href={`/${project.slug}` as Route}>
+        <Link href={localizedPath(`/${project.slug}`, locale) as Route}>
           {ctaLabel} {project.name[locale]}
           <Icon name="arrow-up-right" size="sm" />
         </Link>

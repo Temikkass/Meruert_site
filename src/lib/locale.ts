@@ -16,6 +16,7 @@
  * routing existed yet.
  */
 
+import { notFound } from "next/navigation";
 import type { Locale } from "@/types";
 
 export const locales = ["ru", "en", "kk"] as const satisfies readonly Locale[];
@@ -58,3 +59,15 @@ export const localeShortNames: Record<Locale, string> = {
   en: "EN",
   kk: "KK",
 };
+
+/**
+ * Narrows the `params` a `[locale]` page receives. Anything that is not a
+ * supported locale is a 404 rather than a silent fall back to the default —
+ * middleware.ts already redirects unprefixed paths, so a bad locale here
+ * means someone typed `/de/about`, and quietly serving Russian at that URL
+ * would let a nonexistent language get indexed.
+ */
+export function assertLocale(value: string): Locale {
+  if (!isLocale(value)) notFound();
+  return value;
+}

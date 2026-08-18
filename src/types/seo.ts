@@ -9,11 +9,14 @@
  * partially-optional) `Metadata` shape.
  */
 
-import type { ImageAsset, ProjectId } from "./common";
+import type { ImageAsset, LocalizedText, ProjectId } from "./common";
 
 export interface PageSeo {
-  title: string;
-  description: string;
+  /** Localized: `createMetadata(seo, locale)` picks the active locale. These
+   * were plain strings resolved to `.en` at the config site, which made every
+   * language's <title> and meta description English. */
+  title: LocalizedText;
+  description: LocalizedText;
   /** Defaults to the page's own OG image if omitted */
   ogImage?: ImageAsset;
   path: string; // e.g. "/financial-literacy"
@@ -23,12 +26,13 @@ export interface PageSeo {
 export interface SiteSeo {
   siteName: string;
   baseUrl: string;
-  defaultTitle: string;
+  defaultTitle: LocalizedText;
+  /** Not localized: it is a format string wrapping an already-localized page
+   * title with the owner's name, which is the same in every language. */
   titleTemplate: string; // e.g. "%s — Firstname Lastname"
-  defaultDescription: string;
+  defaultDescription: LocalizedText;
   defaultOgImage: ImageAsset;
   twitterHandle?: string;
-  locale: string; // e.g. "en_US"
 }
 
 /** Minimal, purpose-built shape for schema.org Person JSON-LD */

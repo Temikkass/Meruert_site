@@ -13,6 +13,7 @@ import { Container } from "./Container";
 import { Divider } from "./Divider";
 import { SocialIconRow } from "@/components/shared/buttons/SocialIconRow";
 import { footerColumns, footerOwnerName, footerCopyrightNotice } from "@/config/footer";
+import { localizedPath } from "@/lib/routes";
 import type { Locale } from "@/types";
 
 export function Footer({ locale = "en" }: { locale?: Locale }) {
@@ -36,7 +37,7 @@ export function Footer({ locale = "en" }: { locale?: Locale }) {
                 {column.links.map((link) => (
                   <Link
                     key={link.href}
-                    href={link.href as Route}
+                    href={localizedPath(link.href, locale) as Route}
                     className="text-body-sm text-ink-muted transition-colors duration-fast ease-standard hover:text-ink"
                   >
                     {link.label[locale]}
