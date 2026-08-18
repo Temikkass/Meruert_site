@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Site icon">
+  <!--
+    PLACEHOLDER MARK. Replace with the client's real logo before launch.
+    Colors are the design system's accent token, oklch(52% 0.16 292), and its
+    foreground pair, hardcoded to hex because a standalone favicon file is
+    served outside the CSS cascade and cannot read theme tokens. The two
+    strokes read as an abstract monogram at 16px without committing to an
+    initial we do not know yet.
+  -->
+  <rect width="64" height="64" rx="14" fill="#6d52bc"/>
+  <path d="M20 44V20h9a8 8 0 0 1 0 16h-9" fill="none" stroke="#f8f8fc" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M35 44l9-24" fill="none" stroke="#f8f8fc" stroke-width="4.5" stroke-linecap="round" opacity="0.6"/>
+</svg>
