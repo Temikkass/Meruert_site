@@ -8,24 +8,35 @@
  * cases where a component's *behavior* (not just its styling) needs to
  * change across breakpoints — e.g. Embla Carousel's options object, or
  * disabling a parallax effect below `lg`.
+ *
+ * Built on `useSyncExternalStore`, which is what React provides for exactly
+ * this shape of problem: a value that lives outside React, needs a
+ * subscription, and needs a distinct server snapshot. The earlier version
+ * seeded `useState(false)` and corrected it from an effect, which meant every
+ * consumer rendered once with the wrong answer and then again with the right
+ * one. `useSyncExternalStore` reads the true value during the first client
+ * render instead, so there is no cascading second pass — and React 19's
+ * `react-hooks/set-state-in-effect` rule flags the old pattern for that
+ * reason.
  */
 
-import { useEffect, useState } from "react";
+import { useCallback, useSyncExternalStore } from "react";
 
 export function useMediaQuery(query: string): boolean {
-  // Default to `false` on the server — this hook is only ever called from
-  // Client Components, and this default avoids a hydration mismatch by
-  // matching what a mobile-first, no-JS render would show.
-  const [matches, setMatches] = useState(false);
+  const subscribe = useCallback(
+    (onStoreChange: () => void) => {
+      const mediaQueryList = window.matchMedia(query);
+      mediaQueryList.addEventListener("change", onStoreChange);
+      return () => mediaQueryList.removeEventListener("change", onStoreChange);
+    },
+    [query]
+  );
 
-  useEffect(() => {
-    const mediaQueryList = window.matchMedia(query);
-    setMatches(mediaQueryList.matches);
+  const getSnapshot = useCallback(() => window.matchMedia(query).matches, [query]);
 
-    const listener = (event: MediaQueryListEvent) => setMatches(event.matches);
-    mediaQueryList.addEventListener("change", listener);
-    return () => mediaQueryList.removeEventListener("change", listener);
-  }, [query]);
+  // `false` on the server: this hook only runs in Client Components, and a
+  // mobile-first, no-JS render is the safe assumption to hydrate against.
+  const getServerSnapshot = useCallback(() => false, []);
 
-  return matches;
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }

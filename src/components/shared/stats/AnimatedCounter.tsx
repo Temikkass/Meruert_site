@@ -9,6 +9,11 @@
  * this is fewer moving parts than wiring a MotionValue + change-listener +
  * local state, and it's trivial to short-circuit for reduced motion (jump
  * straight to the final value, no animation frames scheduled at all).
+ *
+ * REDUCED MOTION is handled by deriving the displayed number during render
+ * rather than writing the final value into state from the effect. Same
+ * result, one less render, and no synchronous setState in an effect body —
+ * which React 19's `react-hooks/set-state-in-effect` rule flags.
  */
 
 import { useEffect, useRef, useState } from "react";
@@ -30,12 +35,7 @@ export function AnimatedCounter({ value, prefix = "", suffix = "", duration = 16
   const [display, setDisplay] = useState(0);
 
   useEffect(() => {
-    if (!inView) return;
-
-    if (prefersReducedMotion) {
-      setDisplay(value);
-      return;
-    }
+    if (!inView || prefersReducedMotion) return;
 
     let frame: number;
     const start = performance.now();
@@ -53,10 +53,12 @@ export function AnimatedCounter({ value, prefix = "", suffix = "", duration = 16
     return () => cancelAnimationFrame(frame);
   }, [inView, value, duration, prefersReducedMotion]);
 
+  const shown = prefersReducedMotion ? value : display;
+
   return (
     <span ref={ref} className={className}>
       {prefix}
-      {display.toLocaleString()}
+      {shown.toLocaleString()}
       {suffix}
     </span>
   );
