@@ -1,36 +1,142 @@
-# Premium Personal Brand Site — Architecture Phase
+# Personal Brand Site
 
-This repository is the **foundation only** — folder structure, config layer,
-types, theme tokens, providers, utilities, root layout, and SEO plumbing. No
-pages or visual components have been built yet, by design (see "What's
-deliberately not here" below). Everything here is what a senior engineer
-would want in place *before* the first `<Hero>` gets written, so that
-building pages afterward is assembly, not architecture.
+A trilingual (Russian / English / Kazakh) personal brand site for a client in
+Kazakhstan, introducing the owner and two independent projects: **Financial
+Literacy**, and **Tours, Language Courses & Educational Camps**.
 
-## Install
+Next.js 15 (App Router) · React 19 · TypeScript (strict) · Tailwind CSS v4 ·
+Framer Motion · Lenis. Every page is statically prerendered, in all three
+languages.
+
+---
+
+## Quick start
 
 ```bash
-npm install
+npm ci
+cp .env.example .env.local
 npm run dev
 ```
 
-**Version note:** `next`, `react`, and `react-dom` are pinned to
-`15.5.20` / `19.2.7` deliberately, not just "whatever's newest." Next.js
-15.0–15.5.6 and React 19.0–19.2.2 carry a critical (CVSS 10.0) React
-Server Components RCE, CVE-2025-66478 (nextjs.org/blog/CVE-2025-66478).
-When you eventually move off 15.x onto Next 16, use the same source to
-confirm the target version is past that advisory before pinning it.
+Then open http://localhost:3000 — it redirects to `/ru`.
 
-`npm run typecheck` and `npm run lint` are wired up and should both pass
-against everything in this repo as-is.
+> `npm run dev` (and `npm run build`) need internet access the first time:
+> `next/font/google` downloads and self-hosts Inter, Manrope and Plus Jakarta
+> Sans at build time. There are no runtime requests to Google Fonts.
 
-**On shadcn/ui:** `components.json` is configured (below) so the CLI works
-if you want it, but every primitive currently in `components/ui/` was
-hand-built directly on Radix UI + `class-variance-authority` in the
-design-system phase, styled to this project's own tokens rather than
-shadcn's defaults — see **DESIGN_SYSTEM.md** for the full inventory. Use
-`npx shadcn@latest add <component>` only for something not already in that
-list, and expect to restyle its default classes to match.
+### Scripts
+
+| Script | What it does |
+| --- | --- |
+| `npm run dev` | Dev server (Turbopack) |
+| `npm run build` / `npm start` | Production build / serve |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm run lint` | ESLint |
+| `npm run test` | Vitest unit tests |
+| `npm run verify` | typecheck + lint + test + build — run this before shipping |
+| `npm run placeholders` | Regenerate placeholder images (see *Assets*) |
+
+`npm run build` is not redundant with `typecheck`: `typedRoutes` generates its
+route-literal union at build time, so a mistyped `href` is only caught there.
+CI (`.github/workflows/ci.yml`) runs all four on every push.
+
+---
+
+## Before launch
+
+Everything below is placeholder and must be replaced. Nothing else needs to
+change to go live.
+
+| What | Where |
+| --- | --- |
+| **Production domain** | `NEXT_PUBLIC_SITE_URL` env var — **required** |
+| Owner name, tagline, biography, portrait, location | `src/config/person.ts` |
+| WhatsApp / Telegram / Instagram / email, per project | `src/config/contacts.ts` |
+| Footer owner name | `src/config/footer.ts` |
+| Homepage copy | `src/config/home.ts` |
+| About page copy, timeline, achievements, certificates | `src/config/about.ts`, `timeline.ts`, `achievements.ts`, `certificates.ts` |
+| Project copy | `src/config/financial.ts`, `travel.ts`, `financial-page.ts`, `travel-page.ts` |
+| Contact page copy, working hours | `src/config/contact-page.ts` |
+| Reviews, gallery, FAQ, statistics | `src/config/reviews.ts`, `gallery.ts`, `faq.ts`, `statistics.ts` |
+| **Privacy policy text** — currently placeholder legal copy | `src/config/legal.ts` |
+| Favicon / logo mark | `src/app/icon.svg`, `src/app/apple-icon.png`, `public/icons/` |
+| Photography | `public/images/**` (see *Assets*) |
+
+`NEXT_PUBLIC_SITE_URL` deserves emphasis: it feeds `metadataBase`, every
+canonical URL, Open Graph image resolution, `sitemap.xml` and `robots.txt`.
+Deploy without it and all of those publish the placeholder domain.
+
+### Content is data, not markup
+
+Every user-facing string lives in `src/config/*.ts`, typed as
+`LocalizedText` — `{ en, ru, kk }`. TypeScript will not compile a config
+entry that is missing a language, so a half-translated page cannot ship
+silently. Editing copy never means touching a component.
+
+---
+
+## Languages
+
+Russian is the default. English and Kazakh are equal-status alternatives.
+
+- Pages live at `/{locale}/...`; `/about` redirects to `/ru/about`, or to the
+  visitor's own language if `Accept-Language` names one we support
+  (`src/middleware.ts`).
+- The navbar switcher preserves the current page when changing language.
+- `<html lang>`, `hreflang` alternates, `x-default`, Open Graph locale and the
+  sitemap are all generated per locale.
+
+**To add a locale**: add it to the `Locale` union in `src/types/common.ts`,
+then to `src/lib/locale.ts` (`locales`, `htmlLang`, `ogLocale`, `localeNames`,
+`localeShortNames`). TypeScript will then flag every config file that needs
+the new translation — the compiler walks you through it.
+
+**To drop one**: remove it from both, and delete that key from each config
+entry.
+
+---
+
+## Assets
+
+`public/images/**` currently holds generated grey placeholders, sized to the
+exact `width`/`height` each `ImageAsset` in config declares, so `next/image`
+reserves the correct box and nothing shifts on load.
+
+Replace them with real photography at the **same dimensions**, or update the
+`width`/`height` in the corresponding config entry to match the new files —
+they must agree, or the image will be distorted.
+
+`npm run placeholders` regenerates the placeholder set
+(`scripts/generate-placeholders.mjs`); delete the script once real photography
+is in.
+
+---
+
+## Deploying
+
+Any host that runs Next.js 15 works; Vercel needs no configuration. Two
+requirements:
+
+1. Set `NEXT_PUBLIC_SITE_URL` to the production origin, no trailing slash.
+2. The build machine needs network access for the font download.
+
+`src/middleware.ts` runs on every page request, so a purely static export is
+not supported — the locale redirect needs a server.
+
+---
+
+## Testing
+
+`npm run test` covers the pure logic where a silent regression would be
+expensive:
+
+- `tests/routes.test.ts` — locale-aware href building. Every internal link on
+  the site goes through it.
+- `tests/phone.test.ts` — phone formatting and WhatsApp deep links.
+- `tests/theme-tokens.test.ts` — asserts `config/theme.ts` and the `@theme`
+  and `.dark` blocks in `globals.css` hold identical values. Tailwind v4 has
+  no JS→CSS build step, so those two files are synced by hand; this test is
+  what notices when they drift.
 
 ---
 
@@ -53,7 +159,7 @@ src/
   types/           All TypeScript interfaces, barrel-exported from index.ts
   config/          Every piece of editable content and design token
 public/
-  images/{profile,gallery,projects,backgrounds,testimonials,articles}
+  images/{profile,gallery,projects,backgrounds,testimonials,certificates}
   icons/  fonts/
 ```
 
@@ -85,7 +191,7 @@ This is what makes the config layer swappable for a real CMS later (see
 | `financial.ts` / `travel.ts` | Each project's name, tagline, offerings, hero image | Both satisfy the same `Project` interface — same components render either |
 | `contacts.ts` | WhatsApp / Telegram / Instagram / Email **per project** | The single most-edited file; isolated so a phone-number change is always a one-line diff |
 | `social.ts` | Flat icon-row links | **Derived from `contacts.ts`**, not hand-duplicated — see the file's header comment for why |
-| `gallery.ts` / `faq.ts` / `reviews.ts` / `statistics.ts` / `articles.ts` | Tagged content arrays (`project: "financial" \| "travel" \| "shared"`) | One array each, filtered by consuming components — easier for a non-technical editor to scan than parallel per-project files |
+| `gallery.ts` / `faq.ts` / `reviews.ts` / `statistics.ts` | Tagged content arrays (`project: "financial" \| "travel" \| "shared"`) | One array each, filtered by consuming components — easier for a non-technical editor to scan than parallel per-project files |
 | `navigation.ts` / `footer.ts` | Site-wide nav and footer structure | Generated from `financial.ts`/`travel.ts` project data where possible, so a renamed project updates its nav label automatically |
 | `theme.ts` | Every design token, typed | Mirrored (by hand) into `app/globals.css`'s `@theme` block — see that file's header comment |
 | `seo.ts` | Site defaults + per-path metadata | Feeds both `lib/metadata.ts` and `app/sitemap.ts` |
@@ -96,7 +202,7 @@ This is what makes the config layer swappable for a real CMS later (see
 different names — that duplication is exactly what causes two nearly-same
 types to quietly drift apart over time. One `Project` interface (in
 `types/project.ts`) means one `<ProjectHero>`, one `<ProjectPage>` template
-in the next build phase, and a genuinely trivial path to a third project
+later, and a genuinely trivial path to a third project
 later: a new config file, zero new components.
 
 ## Theming: neutral system + two restrained per-project accents
@@ -161,7 +267,7 @@ entirely — see `providers/smooth-scroll-provider.tsx`).
 ## Providers, composed once
 
 `providers/index.tsx` exports a single `<AppProviders>` wrapping Theme →
-Motion → SmoothScroll → Toast, used once in `app/layout.tsx`. Order is
+Motion → SmoothScroll, used once in `app/[locale]/layout.tsx`. Order is
 documented in that file's header comment. Adding a provider later (e.g. an
 analytics context) means editing one file, not hunting through
 `layout.tsx`.
@@ -169,63 +275,16 @@ analytics context) means editing one file, not hunting through
 ## SEO & structured data
 
 - `lib/metadata.ts#createMetadata()` is the only place that translates the
-  small, config-friendly `PageSeo` type into Next's `Metadata` type —
-  every future page's `generateMetadata` calls this once.
+  small, config-friendly `PageSeo` type into Next's `Metadata` type — every
+  page's `generateMetadata` calls it with the active locale, and it emits the
+  canonical URL plus `hreflang` alternates and `x-default` for all three
+  languages.
 - `app/sitemap.ts` and `app/robots.ts` use Next's file-convention Metadata
   API and are generated FROM `config/seo.ts#pageSeo`, so a new page added
-  to that config object automatically appears in the sitemap — no second
-  list to maintain.
-- `lib/json-ld.ts` builds Person schema (rendered once, root layout) and
-  Organization schema (one per project, rendered on each project page in
-  the next build phase).
-
-## Project status
-
-Four phases — architecture (this file), a full design-system component
-library (**DESIGN_SYSTEM.md**), the homepage, and now every remaining
-page: **About**, **Financial Literacy**, **Tours/Language Courses/Camps**,
-**Contact**, and **Privacy Policy**. Every page is built entirely from the
-existing component library — this phase added content/config, not new UI
-primitives:
-
-- `config/home.ts`, `config/why-choose-me.ts` — homepage copy (phase 3).
-- `config/about.ts`, `config/mission-values.ts`, `config/timeline.ts`,
-  `config/achievements.ts`, `config/certificates.ts` — About page.
-- `config/financial-page.ts`, `config/travel-page.ts` — the two project
-  pages' section copy; `financialLearningFormats`/`financialBenefits` were
-  added as separate exports in `config/financial.ts` (not new fields on
-  the shared `Project` type) since that content has no travel-page
-  equivalent.
-- `config/contact-page.ts` — Contact page copy, working hours, and the
-  contact form's labels/validation messages.
-- `config/legal.ts` — Privacy Policy content (placeholder legal text —
-  replace before launch).
-
-**On the WhatsApp message requirement:** the brief referenced
-`financialProject.whatsappMessage` / `travelProject.whatsappMessage`. That
-field doesn't exist under those names — the predefined message lives at
-`financialProject.contacts.whatsapp.prefilledMessage` /
-`travelProject.contacts.whatsapp.prefilledMessage` (`config/contacts.ts`,
-from the architecture phase), which was already the single source of
-truth for it. `<ProjectHero>` and `<ProjectCtaSection>` both build the
-WhatsApp deep link from there via `createWhatsappLink()`, so the requested
-behavior is there — I didn't add a second, duplicate field.
-
-**A note on `next/font/google` in this environment:** validating every
-page's build in the sandbox this was built in required temporarily
-stubbing `lib/fonts.ts`, because that sandbox's network egress can't reach
-`fonts.googleapis.com`. The real implementation (what's actually in this
-repo) is standard, documented `next/font/google` usage — it needs ordinary
-internet access to self-host the font files at build time, which any real
-dev machine or CI runner has. `npm run build` here will fetch Manrope,
-Plus Jakarta Sans, and Inter normally.
-
-**Still template/placeholder, by design:** the Contact page's form
-validates and shows a success toast but has no backend wired up yet (see
-the comment inside `components/sections/ContactFormSection.tsx` for where
-to add a real submission); the Privacy Policy's section bodies and the
-About page's certificates are placeholder text/images per the brief —
-replace both before launch.
+  to that config object automatically appears in the sitemap, once per
+  locale, with language alternates — no second list to maintain.
+- `lib/json-ld.ts` builds Person schema (rendered once, in the root layout)
+  and Organization schema (one per project, rendered on each project page).
 
 ## Future CMS Integration
 

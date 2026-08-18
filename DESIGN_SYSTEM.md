@@ -1,9 +1,24 @@
 # Design System — Component Reference
 
-This is the design-system phase: every reusable building block the site's
-pages will be assembled from. Per the brief, **no pages, no Hero, no About,
-no Home** — those are the next phase. Everything below is validated (see
-"How this was validated") and ready to compose.
+Every reusable building block the site's pages are assembled from: tokens,
+primitives, layout, motion.
+
+> **How to read this document.** The component and token reference is current.
+> The narrative sections further down ("How this was validated", "Motion-design
+> pass", "Production optimization pass") were written as a build log, phase by
+> phase, and describe the state at the time each phase closed. Four structural
+> facts have changed since, and are not corrected inline below:
+>
+> - **The root layout is `app/[locale]/layout.tsx`**, not `app/layout.tsx`. All
+>   pages moved under a `[locale]` segment when real i18n routing was added.
+> - **There are 26 routes, not 11** — six pages times three locales, plus the
+>   metadata routes and a catch-all 404.
+> - **There is no contact form.** See "Contact: no form, by design" at the end
+>   of this file.
+> - **`ArticleCard` has no `config/articles.ts`** any more; see "Library
+>   surface not currently on a page", also at the end.
+>
+> Where a claim below conflicts with those four points, those four points win.
 
 ## Token reference (config/theme.ts + globals.css)
 
@@ -268,3 +283,40 @@ noreferrer"`; no secrets in source or `.env.example`; `tsc --noEmit` and
 Final bundle sizes: 102kB shared JS baseline, page-specific JS from 1–27kB
 (Contact's form logic is the heaviest at 27.3kB, still a reasonable cost
 for real client-side validation).
+
+## Library surface not currently on a page
+
+Some components below are **intentionally unrendered**. They are part of the
+component library this project ships, built so the site can grow without
+reopening design decisions — not leftovers, and not dead code to prune.
+Anyone auditing the tree should read them as available, not abandoned:
+
+- **`components/ui/`** — `input`, `textarea`, `label`, `checkbox`,
+  `radio-group`, `select`, `switch`, `avatar`. The form primitives lost their
+  last caller when the fake contact form was removed (see below); the rest
+  have not had a use yet. All are token-driven and ready.
+- **`components/shared/`** — `forms/FormField`, `cards/ArticleCard`,
+  `cards/PricingCard`, `stats/ProgressCard`, `content/HighlightText`,
+  `content/Quote`, `gallery/GalleryGrid`.
+- **`components/layout/`** — `PageWrapper`, `Spacer`, `StickySection`.
+
+`ArticleCard` in particular is waiting on an articles/blog page. Its
+`config/articles.ts` was **deleted**: a content config that no page renders is
+worse than no config at all, because it invites the client to write copy that
+will never appear. Re-add it alongside the page that consumes it.
+
+Unused files are not bundled — none of the above costs the visitor anything.
+
+## Contact: no form, by design
+
+`ContactFormSection` was removed. It validated input, waited 900ms and showed
+a success toast without sending anything anywhere, so every message a visitor
+wrote was silently discarded. `ContactChannelsSection` is now the Contact
+page's primary call to action, with WhatsApp promoted to a full labelled
+button per project (the pre-filled, localized message comes from
+`config/contacts.ts` via `createWhatsappLink`). `react-hook-form`, `zod`,
+`@hookform/resolvers` and `sonner` were removed with it; `/contact` first-load
+JS went from 191kB to 157kB.
+
+To add a real form later: the primitives above are still here, and the
+submission endpoint is the only genuinely new piece.
