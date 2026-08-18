@@ -19,7 +19,6 @@ import type { ReactNode } from "react";
 import { ThemeProvider } from "./theme-provider";
 import { MotionProvider } from "./motion-provider";
 import { SmoothScrollProvider } from "./smooth-scroll-provider";
-import { ToastProvider } from "./toast-provider";
 import { CustomCursor } from "./custom-cursor";
 
 export function AppProviders({ children }: { children: ReactNode }) {
@@ -28,7 +27,6 @@ export function AppProviders({ children }: { children: ReactNode }) {
       <MotionProvider>
         <SmoothScrollProvider>
           {children}
-          <ToastProvider />
           <CustomCursor />
         </SmoothScrollProvider>
       </MotionProvider>

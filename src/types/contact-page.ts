@@ -6,32 +6,15 @@
  * Instagram/Email) that already exists — this file is the Contact PAGE's
  * own copy (headings, form labels, working hours), which is a completely
  * different concern from "what is the Financial project's WhatsApp number."
+ *
+ * This used to also carry `ContactFormCopy` — labels, placeholders and
+ * validation messages for a contact form that never sent anything. The form
+ * is gone (see the Contact page); direct messaging channels are the whole
+ * contact story now, which is how this audience actually gets in touch.
  */
 
 import type { LocalizedText } from "./common";
 import type { SectionCopy } from "./content";
-
-export interface ContactFormCopy {
-  nameLabel: LocalizedText;
-  namePlaceholder: LocalizedText;
-  emailLabel: LocalizedText;
-  emailPlaceholder: LocalizedText;
-  projectLabel: LocalizedText;
-  messageLabel: LocalizedText;
-  messagePlaceholder: LocalizedText;
-  submitLabel: LocalizedText;
-  submittingLabel: LocalizedText;
-  successMessage: LocalizedText;
-  errorMessage: LocalizedText;
-  /** Validation messages — kept here (not hardcoded in the form component)
-   * so a client can adjust the exact wording without touching form logic. */
-  validation: {
-    nameRequired: LocalizedText;
-    emailInvalid: LocalizedText;
-    messageRequired: LocalizedText;
-    messageTooShort: LocalizedText;
-  };
-}
 
 export interface ContactPageContent {
   hero: SectionCopy;
@@ -39,6 +22,6 @@ export interface ContactPageContent {
   locationLabel: LocalizedText;
   workingHoursLabel: LocalizedText;
   workingHours: LocalizedText;
-  formSection: SectionCopy;
-  form: ContactFormCopy;
+  /** Label on each project card's primary WhatsApp action. */
+  primaryActionLabel: LocalizedText;
 }

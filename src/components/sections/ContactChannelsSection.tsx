@@ -6,8 +6,9 @@ import { StaggerItem } from "@/components/animations/StaggerItem";
 import { SectionHeading } from "@/components/shared/content/SectionHeading";
 import { Card, CardTitle } from "@/components/ui/card";
 import { SocialButton } from "@/components/shared/buttons/SocialButton";
-import { WhatsAppButton } from "@/components/shared/buttons/WhatsAppButton";
+import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
+import { createWhatsappLink } from "@/lib/phone";
 import { financialProject } from "@/config/financial";
 import { travelProject } from "@/config/travel";
 import { person } from "@/config/person";
@@ -22,6 +23,14 @@ import type { ContactPageContent, Locale } from "@/types";
  * reasoning as the homepage's <CtaSection>. Location and working hours
  * are genuinely shared (they describe the person, not a project), so they
  * render once, alongside the two project cards, in their own small card.
+ *
+ * This section is the Contact page's primary call to action — it replaced a
+ * template contact form that validated input and showed a success toast
+ * without sending anything anywhere. WhatsApp is therefore promoted to a
+ * full labelled button per project rather than one more icon in a row: it is
+ * how this audience actually starts a conversation, and an icon-only control
+ * gives no indication of what happens when you press it. The remaining
+ * channels stay as icon buttons, which is the correct weight for them.
  */
 export function ContactChannelsSection({
   content,
@@ -51,16 +60,29 @@ export function ContactChannelsSection({
                   <Card data-project={project.id} hover="lift" className="flex h-full flex-col gap-4">
                     <CardTitle>{project.name[locale]}</CardTitle>
                     <p className="text-body-sm text-ink-muted leading-body">{project.tagline[locale]}</p>
-                    <div className="mt-auto flex flex-wrap gap-3 pt-2">
-                      {instagram && <SocialButton platform="instagram" href={instagram.url} />}
-                      {telegram && (
-                        <SocialButton
-                          platform="telegram"
-                          href={telegram.url ?? `https://t.me/${telegram.username}`}
-                        />
+                    <div className="mt-auto flex flex-col gap-4 pt-2">
+                      {whatsapp && (
+                        <Button asChild variant="primary" size="md" className="w-full">
+                          <a
+                            href={createWhatsappLink(whatsapp, locale)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <Icon name="whatsapp" size="sm" />
+                            {content.primaryActionLabel[locale]}
+                          </a>
+                        </Button>
                       )}
-                      {whatsapp && <WhatsAppButton channel={whatsapp} locale={locale} />}
-                      {email && <SocialButton platform="email" href={`mailto:${email.address}`} />}
+                      <div className="flex flex-wrap gap-3">
+                        {instagram && <SocialButton platform="instagram" href={instagram.url} />}
+                        {telegram && (
+                          <SocialButton
+                            platform="telegram"
+                            href={telegram.url ?? `https://t.me/${telegram.username}`}
+                          />
+                        )}
+                        {email && <SocialButton platform="email" href={`mailto:${email.address}`} />}
+                      </div>
                     </div>
                   </Card>
                 </StaggerItem>
