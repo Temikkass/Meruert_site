@@ -1,0 +1,308 @@
+/**
+ * app/globals.css
+ * ----------------------------------------------------------------------------
+ * WHY TOKENS ARE DEFINED TWICE (here AND in config/theme.ts)
+ * Tailwind v4 moved configuration into CSS itself via `@theme` — there is no
+ * tailwind.config.js `theme.extend.colors` to generate this from at build
+ * time. `config/theme.ts` remains the conceptual single source of truth
+ * that TypeScript code reads (animation durations passed to Framer Motion,
+ * the project-accent lookup, etc.); the `@theme` block below is that same
+ * system expressed as CSS custom properties so Tailwind can generate
+ * utility classes like `bg-canvas` or `text-ink` from it. Keep the two in
+ * sync by hand when a token changes — see the comment at the top of
+ * config/theme.ts.
+ *
+ * Values are duplicated for light mode inline and re-pointed for dark mode
+ * in the `.dark` block below, following Tailwind v4's recommended
+ * "CSS variables + class strategy" pattern for next-themes compatibility.
+ *
+ * DESIGN-SYSTEM PHASE: sizes for buttons/cards/icons/sections are defined
+ * under Tailwind v4's `--spacing-*` namespace (not a bespoke one) so they
+ * generate real utilities for free — `--spacing-button-md` gives you
+ * `h-button-md`, `--spacing-icon-lg` gives you `size-icon-lg`, etc. This is
+ * the idiomatic v4 extension mechanism rather than inventing custom
+ * properties components would need arbitrary-value syntax to consume.
+ */
+
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* ---- Typography --------------------------------------------------- */
+  --font-display: var(--font-display), "Plus Jakarta Sans", ui-sans-serif, sans-serif;
+  --font-body: var(--font-body), "Inter", ui-sans-serif, sans-serif;
+  --font-data: var(--font-data), "Manrope", ui-sans-serif, sans-serif;
+
+  /* Fluid type scale via clamp() — min/preferred/max, tuned so headline
+     sizes scale continuously across 360px -> 1920px instead of jumping at
+     Tailwind's fixed breakpoints. */
+  --text-display-xl: clamp(2.75rem, 2rem + 3.5vw, 6rem);
+  --text-display-lg: clamp(2.25rem, 1.75rem + 2.5vw, 4.25rem);
+  --text-display-md: clamp(1.75rem, 1.4rem + 1.5vw, 2.75rem);
+  --text-display-sm: clamp(1.375rem, 1.2rem + 0.8vw, 1.875rem);
+  --text-body-lg: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+  --text-body-md: clamp(0.9375rem, 0.9rem + 0.15vw, 1rem);
+  --text-body-sm: clamp(0.8125rem, 0.8rem + 0.1vw, 0.875rem);
+  --text-caption: clamp(0.75rem, 0.72rem + 0.1vw, 0.8125rem);
+  --text-eyebrow: clamp(0.6875rem, 0.67rem + 0.08vw, 0.75rem);
+
+  /* Editorial line-height / tracking pairs — used via leading-* / tracking-* utilities */
+  --leading-display: 1.05;
+  --leading-heading: 1.2;
+  --leading-body: 1.65; /* generous, "readable paragraph" line height */
+  --tracking-display: -0.02em;
+  --tracking-eyebrow: 0.12em;
+
+  /* ---- Color -----------------------------------------------------------
+     Base surfaces + semantic roles. Values mirror config/theme.ts#light
+     exactly — see that file for the full rationale on each addition. */
+  --color-canvas: oklch(98.5% 0.004 293);
+  --color-surface: oklch(100% 0 0);
+  --color-card: oklch(99.2% 0.003 293);
+  --color-ink: oklch(18% 0.02 293);
+  --color-ink-muted: oklch(46% 0.02 293);
+  --color-border: oklch(90% 0.01 293);
+  --color-accent: oklch(52% 0.16 292);
+  --color-accent-tint: oklch(90% 0.05 292);
+  --color-accent-foreground: oklch(98% 0.005 292);
+
+  --color-primary: oklch(52% 0.16 292);
+  --color-primary-foreground: oklch(98% 0.005 292);
+  --color-secondary: oklch(94% 0.006 293);
+  --color-secondary-foreground: oklch(18% 0.02 293);
+  --color-muted: oklch(95.5% 0.005 293);
+  --color-muted-foreground: oklch(52% 0.015 293);
+  --color-success: oklch(50% 0.13 155);
+  --color-warning: oklch(52% 0.13 75);
+  --color-error: oklch(55% 0.18 25);
+  --color-hover: oklch(18% 0.02 293 / 0.04);
+  --color-selection: oklch(90% 0.05 292 / 0.55);
+
+  /* Per-project accents — mirror config/theme.ts#projects */
+  --project-financial-accent: oklch(50% 0.17 288);
+  --project-financial-accent-tint: oklch(91% 0.045 288);
+  --project-travel-accent: oklch(54% 0.13 322);
+  --project-travel-accent-tint: oklch(91% 0.035 322);
+
+  /* ---- Radius --------------------------------------------------------
+     Mirrors config/theme.ts#radius. */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1.25rem;
+  --radius-xl: 2rem;
+
+  /* ---- Shadows (doubles as the elevation scale) -----------------------
+     Soft, low-opacity, neutral-tinted — a "premium" shadow reads as barely
+     there, never a hard drop shadow. Mirrors config/theme.ts#shadow. */
+  --shadow-xs: 0 1px 2px oklch(18% 0.02 293 / 0.04);
+  --shadow-sm: 0 2px 8px -2px oklch(18% 0.02 293 / 0.08);
+  --shadow-md: 0 8px 24px -8px oklch(18% 0.02 293 / 0.12);
+  --shadow-lg: 0 24px 48px -12px oklch(18% 0.02 293 / 0.16);
+  --shadow-xl: 0 40px 80px -16px oklch(18% 0.02 293 / 0.2);
+  --shadow-glow: 0 0 64px -8px oklch(52% 0.16 292 / 0.25);
+
+  /* ---- Blur scale (used both for backdrop-blur utilities and the blurIn
+     animation preset) — mirrors config/theme.ts#blur. */
+  --blur-sm: 8px;
+  --blur-md: 16px;
+  --blur-lg: 24px;
+  --blur-xl: 40px;
+
+  /* ---- Glass effect (used sparingly — nav bar on scroll, modals) ------ */
+  --glass-bg: oklch(100% 0 0 / 0.6);
+  --glass-border: oklch(100% 0 0 / 0.3);
+  --glass-blur: 16px;
+
+  /* ---- Gradients ---------------------------------------------------------
+     Mirrors config/theme.ts#gradient. Exposed as plain custom properties
+     (gradients aren't a Tailwind color-utility namespace) and surfaced as
+     .bg-gradient-* utility classes below. */
+  --gradient-brand: linear-gradient(135deg, oklch(52% 0.16 292) 0%, oklch(60% 0.14 320) 100%);
+  --gradient-subtle: linear-gradient(180deg, oklch(98.5% 0.004 293) 0%, oklch(96% 0.02 292) 100%);
+  --gradient-radial-glow: radial-gradient(circle at 50% 30%, oklch(90% 0.05 292 / 0.4) 0%, transparent 70%);
+
+  /* ---- Sizing scales, under Tailwind's --spacing-* namespace ------------
+     This is what generates h-button-md, p-card-lg, size-icon-sm, py-section-lg,
+     px-gutter as real utilities. Mirrors config/theme.ts#buttonHeight /
+     #cardPadding / #iconSize / #spacing. */
+  --spacing-button-xs: 2rem;
+  --spacing-button-sm: 2.5rem;
+  --spacing-button-md: 3rem;
+  --spacing-button-lg: 3.5rem;
+  --spacing-button-xl: 4rem;
+
+  --spacing-card-sm: 1.25rem;
+  --spacing-card-md: 2rem;
+  --spacing-card-lg: 2.75rem;
+
+  --spacing-icon-xs: 0.875rem;
+  --spacing-icon-sm: 1.125rem;
+  --spacing-icon-md: 1.5rem;
+  --spacing-icon-lg: 2rem;
+  --spacing-icon-xl: 2.75rem;
+
+  --spacing-section-sm: 4rem;
+  --spacing-section-md: 6rem;
+  --spacing-section-lg: 8rem;
+  --spacing-gutter: 1.25rem;
+
+  /* ---- Container -------------------------------------------------------
+     Mirrors config/theme.ts#container. */
+  --container-max: 88rem;
+  --container-padding: 1.25rem;
+
+  /* ---- Motion ----------------------------------------------------------
+     Mirrors config/theme.ts#duration / #easing, expressed as CSS values
+     for use in plain CSS transitions (Framer Motion components instead
+     read lib/animations/transitions.ts, which derives from the same
+     config/theme.ts source). */
+  --duration-fast: 150ms;
+  --duration-base: 350ms;
+  --duration-slow: 600ms;
+  --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-exit: cubic-bezier(0.7, 0, 0.84, 0);
+
+  /* ---- Breakpoints -------------------------------------------------------
+     Mirrors lib/constants.ts#BREAKPOINTS. */
+  --breakpoint-xs: 22.5rem; /* 360px */
+  --breakpoint-sm: 30rem; /* 480px */
+}
+
+.dark {
+  --color-canvas: oklch(15% 0.015 293);
+  --color-surface: oklch(19% 0.018 293);
+  --color-card: oklch(21% 0.018 293);
+  --color-ink: oklch(96% 0.004 293);
+  --color-ink-muted: oklch(70% 0.015 293);
+  --color-border: oklch(28% 0.02 293);
+  --color-accent: oklch(74% 0.13 292);
+  --color-accent-tint: oklch(30% 0.06 292);
+  --color-accent-foreground: oklch(14% 0.02 292);
+
+  --color-primary: oklch(74% 0.13 292);
+  --color-primary-foreground: oklch(14% 0.02 292);
+  --color-secondary: oklch(24% 0.016 293);
+  --color-secondary-foreground: oklch(96% 0.004 293);
+  --color-muted: oklch(23% 0.015 293);
+  --color-muted-foreground: oklch(66% 0.015 293);
+  --color-success: oklch(72% 0.14 155);
+  --color-warning: oklch(78% 0.13 80);
+  --color-error: oklch(70% 0.16 25);
+  --color-hover: oklch(100% 0 0 / 0.06);
+  --color-selection: oklch(30% 0.06 292 / 0.6);
+
+  --glass-bg: oklch(19% 0.018 293 / 0.6);
+  --glass-border: oklch(100% 0 0 / 0.08);
+
+  --gradient-subtle: linear-gradient(180deg, oklch(15% 0.015 293) 0%, oklch(19% 0.03 292) 100%);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    scroll-behavior: auto; /* Lenis owns smooth scrolling; native stays instant */
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    /* iOS safe-area support for notch/Dynamic Island devices, per the
+       mobile-first requirement in the brief. */
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: var(--tracking-display);
+    line-height: var(--leading-heading);
+  }
+
+  p {
+    line-height: var(--leading-body);
+  }
+
+  ::selection {
+    background-color: var(--color-selection);
+  }
+
+  /* Visible focus ring on every interactive element, keyboard-only. Using
+     :focus-visible (not :focus) means mouse clicks don't show a ring while
+     keyboard navigation always does — the correct behavior for both
+     accessibility and visual polish. */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  /* Toggled on <html> by providers/custom-cursor.tsx ONLY after it has
+     confirmed (pointer: fine) + no reduced-motion preference and mounted
+     successfully — see that file's header comment for why the native
+     cursor is never hidden pre-emptively via CSS alone. */
+  .cursor-none,
+  .cursor-none * {
+    cursor: none;
+  }
+
+  .glass {
+    background-color: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+  }
+
+  .bg-gradient-brand {
+    background-image: var(--gradient-brand);
+  }
+
+  .bg-gradient-subtle {
+    background-image: var(--gradient-subtle);
+  }
+
+  .bg-gradient-radial-glow {
+    background-image: var(--gradient-radial-glow);
+  }
+
+  /* Editorial paragraph measure — caps line length for comfortable reading
+     regardless of container width. Applied by <Paragraph> (see
+     components/shared/content). */
+  .text-measure {
+    max-width: 62ch;
+  }
+
+  /* Scoped project theming: wrap a project page's <main> in
+     data-project="financial" | "travel" and every `accent`-based utility
+     inside it resolves to that project's tint instead of the shared brand
+     accent — see config/theme.ts's header comment for the rationale. */
+  [data-project="financial"] {
+    --color-accent: var(--project-financial-accent);
+    --color-accent-tint: var(--project-financial-accent-tint);
+    --color-primary: var(--project-financial-accent);
+  }
+
+  [data-project="travel"] {
+    --color-accent: var(--project-travel-accent);
+    --color-accent-tint: var(--project-travel-accent-tint);
+    --color-primary: var(--project-travel-accent);
+  }
+}

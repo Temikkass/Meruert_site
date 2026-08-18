@@ -1,0 +1,1 @@
+This directory is intentionally empty in the self-hosted setup — next/font/google (see src/lib/fonts.ts) self-hosts and subsets fonts at build time, so no manual font files are needed here unless a custom (non-Google) font is added later.
