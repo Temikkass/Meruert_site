@@ -1,3 +1,4 @@
+import { withPayload } from "@payloadcms/next/withPayload";
 import type { NextConfig } from "next";
 
 /**
@@ -19,6 +20,10 @@ import type { NextConfig } from "next";
  *    ProjectCard, ArticleCard, Footer, CtaSection, HeroCtaButtons) already
  *    casts with `as Route` — re-enabling this needed no further changes
  *    beyond those.
+ *  - `withPayload()`: required by Payload 3 to mount the admin panel inside
+ *    this same Next app. It adds the aliases and transpile rules Payload's
+ *    server components need; without it the /admin route group fails to
+ *    resolve. It wraps the config rather than replacing anything here.
  *  - `experimental.optimizePackageImports`: Next's documented pattern for
  *    icon libraries like lucide-react — ensures each icon is bundled
  *    individually rather than the package's shared module graph pulling in
@@ -35,4 +40,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withPayload(nextConfig);

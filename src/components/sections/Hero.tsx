@@ -30,10 +30,17 @@ import { Parallax } from "@/components/animations/Parallax";
 import { TextReveal } from "@/components/animations/TextReveal";
 import { Eyebrow } from "@/components/shared/content/Eyebrow";
 import { fadeUp, imageReveal } from "@/lib/animations/variants";
-import { person } from "@/config/person";
-import type { HeroContent, Locale } from "@/types";
+import type { HeroContent, Locale, Person } from "@/types";
 
-export function Hero({ content, locale = "en" }: { content: HeroContent; locale?: Locale }) {
+export function Hero({
+  content,
+  person,
+  locale = "en",
+}: {
+  content: HeroContent;
+  person: Person;
+  locale?: Locale;
+}) {
   return (
     <section
       id="hero"

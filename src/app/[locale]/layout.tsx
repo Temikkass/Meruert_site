@@ -9,6 +9,7 @@ import { createDefaultMetadata } from "@/lib/metadata";
 import { buildPersonSchema, serializeJsonLd } from "@/lib/json-ld";
 import { SKIP_TARGET_ID } from "@/lib/constants";
 import { assertLocale, htmlLang, locales } from "@/lib/locale";
+import { getPerson, getPrimaryNav, getSiteSettings, getSocialLinks } from "@/lib/content";
 import "../globals.css";
 
 /**
@@ -81,7 +82,14 @@ export default async function RootLayout({
 }>) {
   const { locale: rawLocale } = await params;
   const locale = assertLocale(rawLocale);
-  const personSchema = buildPersonSchema();
+
+  const [personSchema, person, nav, settings, socialLinks] = await Promise.all([
+    buildPersonSchema(),
+    getPerson(),
+    getPrimaryNav(),
+    getSiteSettings(),
+    getSocialLinks(),
+  ]);
 
   return (
     <html lang={htmlLang[locale]} className={fontVariables} suppressHydrationWarning>
@@ -94,14 +102,25 @@ export default async function RootLayout({
       <body>
         <AppProviders>
           <SkipLink locale={locale} />
-          <Navbar locale={locale} />
+          <Navbar
+            items={nav}
+            ownerName={person.fullName}
+            socialLinks={socialLinks}
+            locale={locale}
+          />
           {/* tabIndex={-1} so the skip link actually moves focus here, not
               just the viewport — a jump target that is not focusable leaves
               the next Tab back at the top of the nav in several browsers. */}
           <div id={SKIP_TARGET_ID} tabIndex={-1} className="outline-none">
             <PageTransition>{children}</PageTransition>
           </div>
-          <Footer locale={locale} />
+          <Footer
+            columns={settings.footerColumns}
+            ownerName={settings.footerOwnerName}
+            copyrightNotice={settings.footerCopyrightNotice}
+            socialLinks={socialLinks}
+            locale={locale}
+          />
         </AppProviders>
       </body>
     </html>

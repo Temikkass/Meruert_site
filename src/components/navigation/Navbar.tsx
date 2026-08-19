@@ -28,8 +28,6 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import type { Route } from "next";
-import { primaryNav } from "@/config/navigation";
-import { person } from "@/config/person";
 import { useScrolled } from "@/hooks/use-scrolled";
 import { NavLink } from "./NavLink";
 import { MobileMenu } from "./MobileMenu";
@@ -38,9 +36,19 @@ import { LanguageSwitcher } from "./LanguageSwitcher";
 import { Container } from "@/components/layout/Container";
 import { cn } from "@/lib/utils";
 import { localizedPath } from "@/lib/routes";
-import type { Locale } from "@/types";
+import type { Locale, NavItem, SocialLink } from "@/types";
 
-export function Navbar({ locale = "en" }: { locale?: Locale }) {
+export function Navbar({
+  items,
+  ownerName,
+  socialLinks,
+  locale = "en",
+}: {
+  items: NavItem[];
+  ownerName: string;
+  socialLinks: SocialLink[];
+  locale?: Locale;
+}) {
   const scrolled = useScrolled();
   const pathname = usePathname();
 
@@ -55,11 +63,11 @@ export function Navbar({ locale = "en" }: { locale?: Locale }) {
       <Container>
         <nav className="flex h-button-lg items-center justify-between" aria-label="Primary">
           <Link href={localizedPath("/", locale) as Route} className="font-display text-body-lg font-semibold text-ink">
-            {person.fullName}
+            {ownerName}
           </Link>
 
           <div className="hidden items-center gap-8 md:flex">
-            {primaryNav.map((item) => (
+            {items.map((item) => (
               <NavLink key={item.href} item={item} locale={locale} active={pathname === item.href} />
             ))}
           </div>
@@ -69,7 +77,7 @@ export function Navbar({ locale = "en" }: { locale?: Locale }) {
           <div className="flex items-center gap-1">
             <LanguageSwitcher locale={locale} />
             <ThemeToggle locale={locale} />
-            <MobileMenu locale={locale} />
+            <MobileMenu items={items} socialLinks={socialLinks} locale={locale} />
           </div>
         </nav>
       </Container>

@@ -17,8 +17,13 @@ primitives, layout, motion.
 >   of this file.
 > - **`ArticleCard` has no `config/articles.ts`** any more; see "Library
 >   surface not currently on a page", also at the end.
+> - **Content comes from a CMS, not from `src/config/`.** Every component takes
+>   its content as props exactly as before, but those props are now filled from
+>   Payload (`src/lib/content/`) rather than static objects. `src/config/` holds
+>   only design tokens and UI chrome; the old content files moved to
+>   `src/seed-data/` as the fixture for an empty database.
 >
-> Where a claim below conflicts with those four points, those four points win.
+> Where a claim below conflicts with those points, those points win.
 
 ## Token reference (config/theme.ts + globals.css)
 

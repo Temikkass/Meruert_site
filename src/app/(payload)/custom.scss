@@ -1,0 +1,16 @@
+/**
+ * app/(payload)/custom.scss
+ * ----------------------------------------------------------------------------
+ * Admin-only styling. Kept nearly empty on purpose: Payload's default admin
+ * theme is well-tested and accessible, and restyling a CMS to match a
+ * marketing site's brand is effort spent where only one person ever looks.
+ *
+ * The one adjustment is the login screen's brand line, so the owner can see
+ * at a glance which site they are signing into.
+ */
+
+.payload__login {
+  .payload-logo {
+    max-width: 12rem;
+  }
+}

@@ -73,11 +73,16 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   /**
-   * Only Next's own internals are excluded here; everything else is filtered
-   * in `isFileRequest` above, where the logic is readable and cannot be
-   * mangled by regex compilation. Exclusions carry no trailing slash because
-   * path-to-regexp tokenises on "/".
+   * Next's own internals and the Payload admin are excluded here; everything
+   * else is filtered in `isFileRequest` above, where the logic is readable and
+   * cannot be mangled by regex compilation.
+   *
+   * `admin` matters: the admin panel is not a localized route, so without this
+   * every visit to /admin would be redirected to /ru/admin and 404. The same
+   * applies to `api`, which serves Payload's REST and GraphQL endpoints.
+   *
+   * Exclusions carry no trailing slash because path-to-regexp tokenises on "/".
    */
-  matcher: ["/((?!api|_next).*)"],
+  matcher: ["/((?!api|_next|admin).*)"],
 };
 

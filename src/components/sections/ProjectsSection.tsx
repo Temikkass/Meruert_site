@@ -13,15 +13,15 @@ import { StaggerItem } from "@/components/animations/StaggerItem";
 import { SectionHeading } from "@/components/shared/content/SectionHeading";
 import { ProjectCard } from "@/components/shared/cards/ProjectCard";
 import { scaleIn } from "@/lib/animations/variants";
-import { financialProject } from "@/config/financial";
-import { travelProject } from "@/config/travel";
-import type { HomeContent, Locale } from "@/types";
+import type { HomeContent, Locale, Project } from "@/types";
 
 export function ProjectsSection({
   content,
+  projects,
   locale = "en",
 }: {
   content: HomeContent["projects"];
+  projects: Project[];
   locale?: Locale;
 }) {
   return (
@@ -35,12 +35,11 @@ export function ProjectsSection({
         />
 
         <StaggerGroup className="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-2" staggerDelay={0.12}>
-          <StaggerItem variants={scaleIn}>
-            <ProjectCard project={financialProject} ctaLabel={content.cardCtaLabel[locale]} locale={locale} />
-          </StaggerItem>
-          <StaggerItem variants={scaleIn}>
-            <ProjectCard project={travelProject} ctaLabel={content.cardCtaLabel[locale]} locale={locale} />
-          </StaggerItem>
+          {projects.map((project) => (
+            <StaggerItem key={project.id} variants={scaleIn}>
+              <ProjectCard project={project} ctaLabel={content.cardCtaLabel[locale]} locale={locale} />
+            </StaggerItem>
+          ))}
         </StaggerGroup>
       </Container>
     </AnimatedSection>

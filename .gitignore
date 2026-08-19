@@ -35,3 +35,9 @@ next-env.d.ts
 
 # local agent/editor scratch
 .claude/
+
+# local development database cluster (see README - Database)
+.postgres/
+
+# Payload media uploads (local disk in development; object storage in production)
+/media/

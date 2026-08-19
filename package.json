@@ -2,6 +2,7 @@
   "name": "premium-personal-brand-site",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
@@ -11,9 +12,25 @@
     "placeholders": "node scripts/generate-placeholders.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
-    "verify": "npm run typecheck && npm run lint && npm run test && npm run build"
+    "verify": "npm run typecheck && npm run lint && npm run test && npm run build",
+    "admin:create": "tsx --env-file-if-exists=.env.local scripts/create-admin.ts",
+    "db:start": "pg_ctl -D .postgres/data -o \"-p 5433\" -l .postgres/server.log start",
+    "db:stop": "pg_ctl -D .postgres/data stop",
+    "db:status": "pg_ctl -D .postgres/data status",
+    "cms:verify": "tsx --env-file-if-exists=.env.local scripts/verify-cms.ts",
+    "cms:types": "payload generate:types",
+    "cms:migrate": "payload migrate",
+    "seed": "tsx --env-file-if-exists=.env.local scripts/seed.ts",
+    "launch:check": "tsx --env-file-if-exists=.env.local scripts/launch-check.ts",
+    "icons": "node scripts/generate-icons.mjs",
+    "vercel-build": "payload migrate && next build"
   },
   "dependencies": {
+    "@payloadcms/db-postgres": "^3.88.0",
+    "@payloadcms/email-resend": "^3.88.0",
+    "@payloadcms/next": "^3.88.0",
+    "@payloadcms/richtext-lexical": "^3.88.0",
+    "@payloadcms/storage-s3": "^3.88.0",
     "@radix-ui/react-accordion": "^1.2.2",
     "@radix-ui/react-avatar": "^1.1.2",
     "@radix-ui/react-checkbox": "^1.1.3",
@@ -29,10 +46,12 @@
     "clsx": "^2.1.1",
     "embla-carousel-react": "^8.5.2",
     "framer-motion": "^11.18.2",
+    "graphql": "^16.14.2",
     "lenis": "^1.1.20",
     "lucide-react": "^0.469.0",
-    "next": "15.5.20",
+    "next": "^16.3.1",
     "next-themes": "^0.4.4",
+    "payload": "^3.88.0",
     "react": "19.2.7",
     "react-dom": "19.2.7",
     "tailwind-merge": "^2.6.0"
@@ -44,12 +63,16 @@
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "eslint": "^9.18.0",
-    "eslint-config-next": "15.5.20",
+    "eslint-config-next": "^16.3.1",
     "postcss": "^8.5.1",
-    "sharp": "^0.34.4",
+    "sharp": "^0.35.3",
     "tailwindcss": "^4.0.0",
+    "tsx": "^4.23.12",
     "tw-animate-css": "^1.2.0",
     "typescript": "^5.7.3",
     "vitest": "^4.1.11"
+  },
+  "overrides": {
+    "dompurify": "^3.4.13"
   }
 }

@@ -12,11 +12,27 @@ import type { Route } from "next";
 import { Container } from "./Container";
 import { Divider } from "./Divider";
 import { SocialIconRow } from "@/components/shared/buttons/SocialIconRow";
-import { footerColumns, footerOwnerName, footerCopyrightNotice } from "@/config/footer";
 import { localizedPath } from "@/lib/routes";
-import type { Locale } from "@/types";
+import type { Locale, LocalizedText, SocialLink } from "@/types";
 
-export function Footer({ locale = "en" }: { locale?: Locale }) {
+export interface FooterColumn {
+  title: LocalizedText;
+  links: { label: LocalizedText; href: string }[];
+}
+
+export function Footer({
+  columns,
+  ownerName,
+  copyrightNotice,
+  socialLinks,
+  locale = "en",
+}: {
+  columns: FooterColumn[];
+  ownerName: string;
+  copyrightNotice: LocalizedText;
+  socialLinks: SocialLink[];
+  locale?: Locale;
+}) {
   return (
     <footer className="pb-[calc(env(safe-area-inset-bottom)+2rem)]">
       <Container>
@@ -24,12 +40,12 @@ export function Footer({ locale = "en" }: { locale?: Locale }) {
 
         <div className="flex flex-col gap-10 py-12 md:flex-row md:justify-between">
           <div className="flex flex-col gap-4">
-            <span className="font-display text-body-lg font-semibold text-ink">{footerOwnerName}</span>
-            <SocialIconRow />
+            <span className="font-display text-body-lg font-semibold text-ink">{ownerName}</span>
+            <SocialIconRow links={socialLinks} />
           </div>
 
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-2 md:flex md:gap-16">
-            {footerColumns.map((column) => (
+            {columns.map((column) => (
               <div key={column.title[locale]} className="flex flex-col gap-3">
                 <span className="text-caption font-semibold uppercase tracking-eyebrow text-ink-muted">
                   {column.title[locale]}
@@ -51,7 +67,7 @@ export function Footer({ locale = "en" }: { locale?: Locale }) {
         <Divider />
 
         <p className="py-6 text-caption text-ink-muted">
-          © {new Date().getFullYear()} {footerOwnerName}. {footerCopyrightNotice[locale]}
+          © {new Date().getFullYear()} {ownerName}. {copyrightNotice[locale]}
         </p>
       </Container>
     </footer>

@@ -3,8 +3,7 @@ import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/shared/content/SectionHeading";
 import { Carousel } from "@/components/shared/gallery/Carousel";
 import { ReviewCard } from "@/components/shared/cards/ReviewCard";
-import { reviews } from "@/config/reviews";
-import type { Locale, ProjectId, SectionCopy } from "@/types";
+import type { Locale, ProjectId, SectionCopy, Testimonial } from "@/types";
 
 /**
  * components/sections/TestimonialsSection.tsx
@@ -15,11 +14,13 @@ import type { Locale, ProjectId, SectionCopy } from "@/types";
  */
 export function TestimonialsSection({
   content,
+  reviews,
   project,
   id = "testimonials",
   locale = "en",
 }: {
   content: SectionCopy;
+  reviews: Testimonial[];
   project?: ProjectId;
   id?: string;
   locale?: Locale;

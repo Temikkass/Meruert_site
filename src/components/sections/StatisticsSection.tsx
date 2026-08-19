@@ -5,8 +5,7 @@ import { StaggerGroup } from "@/components/animations/StaggerGroup";
 import { StaggerItem } from "@/components/animations/StaggerItem";
 import { SectionHeading } from "@/components/shared/content/SectionHeading";
 import { StatCard } from "@/components/shared/stats/StatCard";
-import { statistics } from "@/config/statistics";
-import type { Locale, SectionCopy } from "@/types";
+import type { Locale, SectionCopy, Statistic } from "@/types";
 
 /**
  * components/sections/StatisticsSection.tsx
@@ -16,7 +15,15 @@ import type { Locale, SectionCopy } from "@/types";
  * belonging to either one is still fair to show here (each project's own
  * page, built in a later phase, would filter to just its own).
  */
-export function StatisticsSection({ content, locale = "en" }: { content: SectionCopy; locale?: Locale }) {
+export function StatisticsSection({
+  content,
+  statistics,
+  locale = "en",
+}: {
+  content: SectionCopy;
+  statistics: Statistic[];
+  locale?: Locale;
+}) {
   return (
     <AnimatedSection background="gradient">
       <Container>

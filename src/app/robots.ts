@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { siteSeo } from "@/config/seo";
+import { resolveBaseUrl } from "@/lib/seo";
 
 /**
  * app/robots.ts
@@ -9,11 +9,13 @@ import { siteSeo } from "@/config/seo";
  * update when the domain changes (see config/seo.ts#baseUrl).
  */
 export default function robots(): MetadataRoute.Robots {
+  const baseUrl = resolveBaseUrl();
+
   return {
     rules: {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: `${siteSeo.baseUrl}/sitemap.xml`,
+    sitemap: `${baseUrl}/sitemap.xml`,
   };
 }

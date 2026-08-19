@@ -9,18 +9,22 @@
  * only ever saw it if their OS preference happened to select it. This is the
  * switch.
  *
- * MOUNT GUARD: `next-themes` cannot know the resolved theme during SSR (it
- * lives in localStorage / a media query), so rendering the real icon before
- * mount would guarantee a hydration mismatch. Until mounted we render the
+ * HYDRATION GUARD: `next-themes` cannot know the resolved theme during SSR
+ * (it lives in localStorage / a media query), so rendering the real icon
+ * before hydration would guarantee a mismatch. Until then we render the
  * same-sized button with a neutral icon — the layout never shifts, which is
  * the reason for reserving the box rather than returning null.
+ *
+ * `useIsHydrated` rather than the usual mounted-flag-in-an-effect: the effect
+ * version schedules a second render just to record that hydration happened,
+ * which React 19's `react-hooks/set-state-in-effect` rule flags.
  */
 
-import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { Icon } from "@/components/ui/icon";
 import { themeToggleLabels } from "@/config/system";
 import { defaultLocale } from "@/lib/locale";
+import { useIsHydrated } from "@/hooks/use-is-hydrated";
 import { cn } from "@/lib/utils";
 import type { Locale } from "@/types";
 
@@ -32,11 +36,9 @@ export function ThemeToggle({
   className?: string;
 }) {
   const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+  const isHydrated = useIsHydrated();
 
-  useEffect(() => setMounted(true), []);
-
-  const isDark = mounted && resolvedTheme === "dark";
+  const isDark = isHydrated && resolvedTheme === "dark";
   const label = isDark ? themeToggleLabels.toLight[locale] : themeToggleLabels.toDark[locale];
 
   return (

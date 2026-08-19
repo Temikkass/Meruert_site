@@ -19,12 +19,20 @@ import { Reveal } from "@/components/animations/Reveal";
 import { Magnetic } from "@/components/animations/Magnetic";
 import { Button } from "@/components/ui/button";
 import { fadeUp } from "@/lib/animations/variants";
-import { financialProject } from "@/config/financial";
-import { travelProject } from "@/config/travel";
 import { localizedPath } from "@/lib/routes";
-import type { Locale, SectionCopy } from "@/types";
+import type { Locale, Project, SectionCopy } from "@/types";
 
-export function CtaSection({ content, locale = "en" }: { content: SectionCopy; locale?: Locale }) {
+export function CtaSection({
+  content,
+  financialProject,
+  travelProject,
+  locale = "en",
+}: {
+  content: SectionCopy;
+  financialProject: Project;
+  travelProject: Project;
+  locale?: Locale;
+}) {
   return (
     <AnimatedSection id="contact" background="gradient">
       <Container className="max-w-2xl text-center">

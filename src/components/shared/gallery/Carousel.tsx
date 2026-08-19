@@ -12,7 +12,7 @@
  * dot indicators on top, styled to the token system.
  */
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -39,22 +39,32 @@ export function Carousel({
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
 
-  const onSelect = useCallback(() => {
-    if (!emblaApi) return;
-    setSelectedIndex(emblaApi.selectedScrollSnap());
-  }, [emblaApi]);
-
   useEffect(() => {
     if (!emblaApi) return;
-    setScrollSnaps(emblaApi.scrollSnapList());
-    onSelect();
-    emblaApi.on("select", onSelect);
-    emblaApi.on("reInit", onSelect);
-    return () => {
-      emblaApi.off("select", onSelect);
-      emblaApi.off("reInit", onSelect);
+
+    const sync = () => {
+      setScrollSnaps(emblaApi.scrollSnapList());
+      setSelectedIndex(emblaApi.selectedScrollSnap());
     };
-  }, [emblaApi, onSelect]);
+
+    emblaApi.on("select", sync);
+    emblaApi.on("reInit", sync);
+
+    // Embla has already initialised by the time this effect runs, so its
+    // "init" event has been and gone and `sync` would otherwise not fire
+    // until the user interacts — the dots would render empty. Seeding it on
+    // the next frame rather than calling it inline keeps the first paint off
+    // the critical path and avoids a synchronous setState in an effect body
+    // (React 19's react-hooks/set-state-in-effect). Same rAF-defer shape as
+    // hooks/use-scrolled.ts.
+    const frame = requestAnimationFrame(sync);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      emblaApi.off("select", sync);
+      emblaApi.off("reInit", sync);
+    };
+  }, [emblaApi]);
 
   const basisClass = cn(
     slidesPerView.base === 1 && "flex-[0_0_100%]",

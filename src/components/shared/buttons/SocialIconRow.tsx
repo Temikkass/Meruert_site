@@ -8,7 +8,6 @@
  * page's contact section shows only that project's.
  */
 
-import { socialLinks } from "@/config/social";
 import { SocialButton, type SocialPlatform } from "./SocialButton";
 import { Stack } from "@/components/layout/Stack";
 import { cn } from "@/lib/utils";
@@ -21,11 +20,13 @@ function isSupportedPlatform(link: SocialLink): link is SocialLink & { platform:
 }
 
 export interface SocialIconRowProps {
+  /** Every social link on the site; filtered by `project` below. */
+  links: SocialLink[];
   project?: ProjectId;
   className?: string;
 }
 
-export function SocialIconRow({ project, className }: SocialIconRowProps) {
+export function SocialIconRow({ project, links: socialLinks, className }: SocialIconRowProps) {
   const scoped = project ? socialLinks.filter((link) => link.project === project) : socialLinks;
   const links = scoped.filter(isSupportedPlatform);
 

@@ -18,13 +18,20 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { AnimatePresence, motion } from "framer-motion";
 import { X, Menu } from "lucide-react";
 import { useState } from "react";
-import { primaryNav } from "@/config/navigation";
 import { NavLink } from "./NavLink";
 import { SocialIconRow } from "@/components/shared/buttons/SocialIconRow";
 import { transitions } from "@/lib/animations/transitions";
-import type { Locale } from "@/types";
+import type { Locale, NavItem, SocialLink } from "@/types";
 
-export function MobileMenu({ locale = "en" }: { locale?: Locale }) {
+export function MobileMenu({
+  items,
+  socialLinks,
+  locale = "en",
+}: {
+  items: NavItem[];
+  socialLinks: SocialLink[];
+  locale?: Locale;
+}) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -72,7 +79,7 @@ export function MobileMenu({ locale = "en" }: { locale?: Locale }) {
                 </div>
 
                 <nav className="mt-8 flex flex-1 flex-col gap-2">
-                  {primaryNav.map((item) => (
+                  {items.map((item) => (
                     <NavLink
                       key={item.href}
                       item={item}
@@ -83,7 +90,7 @@ export function MobileMenu({ locale = "en" }: { locale?: Locale }) {
                   ))}
                 </nav>
 
-                <SocialIconRow className="justify-center pb-4" />
+                <SocialIconRow links={socialLinks} className="justify-center pb-4" />
               </motion.div>
             </DialogPrimitive.Content>
           </DialogPrimitive.Portal>

@@ -18,13 +18,13 @@
 
 import type { Metadata } from "next";
 import type { Locale, PageSeo } from "@/types";
-import { siteSeo } from "@/config/seo";
+import { getSiteSeo } from "./seo";
 import { defaultLocale, htmlLang, locales, ogLocale } from "./locale";
 import { localizedPath } from "./routes";
 
 /** Absolute URL for a path in a given locale. */
-function absoluteUrl(path: string, locale: Locale): string {
-  return `${siteSeo.baseUrl}${localizedPath(path, locale)}`;
+function absoluteUrl(baseUrl: string, path: string, locale: Locale): string {
+  return `${baseUrl}${localizedPath(path, locale)}`;
 }
 
 /**
@@ -32,16 +32,19 @@ function absoluteUrl(path: string, locale: Locale): string {
  * `x-default` pointing at the primary language — the signal Google uses when
  * none of the listed languages match the user.
  */
-function languageAlternates(path: string): Record<string, string> {
-  const entries = locales.map((locale) => [htmlLang[locale], absoluteUrl(path, locale)] as const);
+function languageAlternates(baseUrl: string, path: string): Record<string, string> {
+  const entries = locales.map(
+    (locale) => [htmlLang[locale], absoluteUrl(baseUrl, path, locale)] as const
+  );
   return {
     ...Object.fromEntries(entries),
-    "x-default": absoluteUrl(path, defaultLocale),
+    "x-default": absoluteUrl(baseUrl, path, defaultLocale),
   };
 }
 
-export function createMetadata(page: PageSeo, locale: Locale): Metadata {
-  const url = absoluteUrl(page.path, locale);
+export async function createMetadata(page: PageSeo, locale: Locale): Promise<Metadata> {
+  const siteSeo = await getSiteSeo();
+  const url = absoluteUrl(siteSeo.baseUrl, page.path, locale);
   const ogImage = page.ogImage ?? siteSeo.defaultOgImage;
   const title = page.title[locale];
   const description = page.description[locale];
@@ -51,7 +54,7 @@ export function createMetadata(page: PageSeo, locale: Locale): Metadata {
     description,
     alternates: {
       canonical: url,
-      languages: languageAlternates(page.path),
+      languages: languageAlternates(siteSeo.baseUrl, page.path),
     },
     openGraph: {
       title,
@@ -86,7 +89,8 @@ export function createMetadata(page: PageSeo, locale: Locale): Metadata {
  * `createMetadata(pageSeo[...], locale)` on top of this via Next's metadata
  * inheritance/merging.
  */
-export function createDefaultMetadata(locale: Locale): Metadata {
+export async function createDefaultMetadata(locale: Locale): Promise<Metadata> {
+  const siteSeo = await getSiteSeo();
   return {
     metadataBase: new URL(siteSeo.baseUrl),
     title: {
