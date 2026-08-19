@@ -15,7 +15,20 @@ const eslintConfig = [
   ...coreWebVitals,
   ...typescript,
   {
-    ignores: [".next/**", "node_modules/**", "next-env.d.ts"],
+    /**
+     * Generated code is not reviewed by hand, so linting it only produces
+     * noise a human cannot act on: the migration and payload-types files are
+     * rewritten wholesale by `payload migrate:create` / `generate:types`, and
+     * importMap.js by `generate:importmap`.
+     */
+    ignores: [
+      ".next/**",
+      "node_modules/**",
+      "next-env.d.ts",
+      "src/migrations/**",
+      "src/cms/payload-types.ts",
+      "src/app/(payload)/admin/importMap.js",
+    ],
   },
 ];
 

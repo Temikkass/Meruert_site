@@ -12,7 +12,14 @@
     "placeholders": "node scripts/generate-placeholders.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
-    "verify": "npm run typecheck && npm run lint && npm run test && npm run build"
+    "verify": "npm run typecheck && npm run lint && npm run test && npm run build",
+    "admin:create": "tsx --env-file=.env.local scripts/create-admin.ts",
+    "db:start": "pg_ctl -D .postgres/data -o \"-p 5433\" -l .postgres/server.log start",
+    "db:stop": "pg_ctl -D .postgres/data stop",
+    "db:status": "pg_ctl -D .postgres/data status",
+    "cms:verify": "tsx --env-file=.env.local scripts/verify-cms.ts",
+    "cms:types": "payload generate:types",
+    "cms:migrate": "payload migrate"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "^3.88.0",
@@ -54,6 +61,7 @@
     "postcss": "^8.5.1",
     "sharp": "^0.35.3",
     "tailwindcss": "^4.0.0",
+    "tsx": "^4.23.12",
     "tw-animate-css": "^1.2.0",
     "typescript": "^5.7.3",
     "vitest": "^4.1.11"

@@ -35,3 +35,6 @@ next-env.d.ts
 
 # local agent/editor scratch
 .claude/
+
+# local development database cluster (see README - Database)
+.postgres/

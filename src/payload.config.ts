@@ -3,6 +3,8 @@ import { fileURLToPath } from "node:url";
 
 import { postgresAdapter } from "@payloadcms/db-postgres";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
+import { en } from "@payloadcms/translations/languages/en";
+import { ru } from "@payloadcms/translations/languages/ru";
 import { buildConfig } from "payload";
 import sharp from "sharp";
 
@@ -90,6 +92,18 @@ export default buildConfig({
     locales: locales.map((code) => ({ code, label: code.toUpperCase() })),
     defaultLocale,
     fallback: true,
+  },
+
+  /**
+   * The admin UI's own chrome — buttons, menus, validation messages — in
+   * Russian. This is separate from `localization` above, which is about the
+   * CONTENT being edited. The client works in Russian, so the interface
+   * around the content should be too; English stays available so a developer
+   * can switch back from the account menu.
+   */
+  i18n: {
+    supportedLanguages: { ru, en },
+    fallbackLanguage: "ru",
   },
 
   editor: lexicalEditor(),
