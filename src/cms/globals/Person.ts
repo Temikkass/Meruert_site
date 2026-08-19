@@ -1,4 +1,5 @@
 import type { GlobalConfig } from "payload";
+import { revalidateGlobalAfterChange } from "../hooks/revalidate";
 import { imageField, localizedText, localizedTextarea } from "../fields/shared";
 
 /**
@@ -25,6 +26,9 @@ export const Person: GlobalConfig = {
   access: {
     read: () => true,
     update: ({ req }) => Boolean(req.user),
+  },
+  hooks: {
+    afterChange: [revalidateGlobalAfterChange],
   },
   fields: [
     {

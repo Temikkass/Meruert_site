@@ -1,4 +1,5 @@
 import type { CollectionConfig } from "payload";
+import { revalidateAfterChange, revalidateAfterDelete } from "../hooks/revalidate";
 import { imageField, localizedText, orderField } from "../fields/shared";
 
 /**
@@ -36,4 +37,8 @@ export const Certificates: CollectionConfig = {
     imageField("image", "Скан или фото", { required: true, dimensions: "800×600" }),
     orderField,
   ],
+  hooks: {
+    afterChange: [revalidateAfterChange],
+    afterDelete: [revalidateAfterDelete],
+  },
 };

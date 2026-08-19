@@ -1,4 +1,5 @@
 import type { CollectionConfig } from "payload";
+import { revalidateAfterChange, revalidateAfterDelete } from "../hooks/revalidate";
 import { localizedText, localizedTextarea, orderField } from "../fields/shared";
 
 /**
@@ -39,4 +40,8 @@ export const Timeline: CollectionConfig = {
     localizedTextarea("description", "Описание", { rows: 4, description: "Необязательно." }),
     orderField,
   ],
+  hooks: {
+    afterChange: [revalidateAfterChange],
+    afterDelete: [revalidateAfterDelete],
+  },
 };

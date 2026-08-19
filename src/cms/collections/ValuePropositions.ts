@@ -1,4 +1,5 @@
 import type { CollectionConfig } from "payload";
+import { revalidateAfterChange, revalidateAfterDelete } from "../hooks/revalidate";
 import { localizedText, localizedTextarea, orderField } from "../fields/shared";
 
 /**
@@ -70,4 +71,8 @@ export const ValuePropositions: CollectionConfig = {
     localizedTextarea("description", "Описание", { required: true, rows: 4 }),
     orderField,
   ],
+  hooks: {
+    afterChange: [revalidateAfterChange],
+    afterDelete: [revalidateAfterDelete],
+  },
 };

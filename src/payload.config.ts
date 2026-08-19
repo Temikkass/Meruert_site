@@ -28,6 +28,7 @@ import { Person } from "@/cms/globals/Person";
 import { FinancialPage, TravelPage } from "@/cms/globals/ProjectPages";
 import { SiteSettings } from "@/cms/globals/SiteSettings";
 
+import { storagePlugins } from "@/cms/storage";
 import { defaultLocale, locales } from "@/lib/locale";
 
 /**
@@ -115,6 +116,13 @@ export default buildConfig({
   }),
 
   sharp,
+
+  /**
+   * Uploads go to ./media on local disk unless the S3 variables are set, in
+   * which case they go to object storage. See src/cms/storage.ts for why that
+   * matters in production.
+   */
+  plugins: storagePlugins(),
 
   typescript: {
     outputFile: path.resolve(dirname, "cms/payload-types.ts"),

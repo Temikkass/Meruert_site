@@ -38,3 +38,6 @@ next-env.d.ts
 
 # local development database cluster (see README - Database)
 .postgres/
+
+# Payload media uploads (local disk in development; object storage in production)
+/media/

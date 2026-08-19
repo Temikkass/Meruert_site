@@ -1,4 +1,5 @@
 import type { GlobalConfig } from "payload";
+import { revalidateGlobalAfterChange } from "../hooks/revalidate";
 import { localizedText, localizedTextarea, sectionCopy } from "../fields/shared";
 
 /**
@@ -16,6 +17,9 @@ export const AboutPage: GlobalConfig = {
   admin: { group: "Страницы", description: "Заголовки на странице «Обо мне»." },
   label: "Страница «Обо мне»",
   access: { read: () => true, update: ({ req }) => Boolean(req.user) },
+  hooks: {
+    afterChange: [revalidateGlobalAfterChange],
+  },
   fields: [
     {
       type: "tabs",

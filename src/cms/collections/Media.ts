@@ -1,4 +1,5 @@
 import type { CollectionConfig } from "payload";
+import { revalidateAfterChange, revalidateAfterDelete } from "../hooks/revalidate";
 
 /**
  * cms/collections/Media.ts
@@ -52,4 +53,8 @@ export const Media: CollectionConfig = {
       },
     },
   ],
+  hooks: {
+    afterChange: [revalidateAfterChange],
+    afterDelete: [revalidateAfterDelete],
+  },
 };

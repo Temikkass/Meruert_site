@@ -1,4 +1,5 @@
 import type { GlobalConfig } from "payload";
+import { revalidateGlobalAfterChange } from "../hooks/revalidate";
 import { localizedText, localizedTextarea, sectionCopy } from "../fields/shared";
 
 /**
@@ -17,7 +18,9 @@ import { localizedText, localizedTextarea, sectionCopy } from "../fields/shared"
 const heroGroup = {
   name: "hero",
   type: "group" as const,
-  label: "Первый экран",
+  label: "Первый экран",  hooks: {
+    afterChange: [revalidateGlobalAfterChange],
+  },
   fields: [
     localizedText("eyebrow", "Надзаголовок"),
     localizedTextarea("heading", "Заголовок", { required: true, rows: 2 }),
@@ -31,6 +34,9 @@ export const FinancialPage: GlobalConfig = {
   admin: { group: "Страницы", description: "Заголовки на странице «Финансовая грамотность»." },
   label: "Страница «Финансовая грамотность»",
   access: { read: () => true, update: ({ req }) => Boolean(req.user) },
+  hooks: {
+    afterChange: [revalidateGlobalAfterChange],
+  },
   fields: [
     heroGroup,
     sectionCopy("about", "Блок «О проекте»"),
@@ -49,6 +55,9 @@ export const TravelPage: GlobalConfig = {
   admin: { group: "Страницы", description: "Заголовки на странице «Туры и курсы»." },
   label: "Страница «Туры и курсы»",
   access: { read: () => true, update: ({ req }) => Boolean(req.user) },
+  hooks: {
+    afterChange: [revalidateGlobalAfterChange],
+  },
   fields: [
     heroGroup,
     sectionCopy("about", "Блок «О проекте»"),

@@ -1,4 +1,5 @@
 import type { CollectionConfig } from "payload";
+import { revalidateAfterChange, revalidateAfterDelete } from "../hooks/revalidate";
 import { localizedText, localizedTextarea, orderField, projectScopeField } from "../fields/shared";
 
 /**
@@ -40,4 +41,8 @@ export const Faq: CollectionConfig = {
     projectScopeField,
     orderField,
   ],
+  hooks: {
+    afterChange: [revalidateAfterChange],
+    afterDelete: [revalidateAfterDelete],
+  },
 };

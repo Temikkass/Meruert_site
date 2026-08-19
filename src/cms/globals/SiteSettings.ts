@@ -1,4 +1,5 @@
 import type { GlobalConfig } from "payload";
+import { revalidateGlobalAfterChange } from "../hooks/revalidate";
 import { imageField, localizedText, localizedTextarea } from "../fields/shared";
 
 /**
@@ -23,6 +24,9 @@ export const SiteSettings: GlobalConfig = {
   },
   label: "Настройки сайта",
   access: { read: () => true, update: ({ req }) => Boolean(req.user) },
+  hooks: {
+    afterChange: [revalidateGlobalAfterChange],
+  },
   fields: [
     {
       type: "tabs",

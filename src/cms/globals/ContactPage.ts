@@ -1,4 +1,5 @@
 import type { GlobalConfig } from "payload";
+import { revalidateGlobalAfterChange } from "../hooks/revalidate";
 import { localizedText, sectionCopy } from "../fields/shared";
 
 /**
@@ -15,6 +16,9 @@ export const ContactPage: GlobalConfig = {
   admin: { group: "Страницы", description: "Тексты на странице «Контакты»." },
   label: "Страница «Контакты»",
   access: { read: () => true, update: ({ req }) => Boolean(req.user) },
+  hooks: {
+    afterChange: [revalidateGlobalAfterChange],
+  },
   fields: [
     sectionCopy("hero", "Первый экран"),
     sectionCopy("channelsHeading", "Блок «Каналы связи»"),

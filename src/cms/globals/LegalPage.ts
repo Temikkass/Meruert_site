@@ -1,4 +1,5 @@
 import type { GlobalConfig } from "payload";
+import { revalidateGlobalAfterChange } from "../hooks/revalidate";
 import { localizedText, localizedTextarea } from "../fields/shared";
 
 /**
@@ -24,6 +25,9 @@ export const LegalPage: GlobalConfig = {
   },
   label: "Политика конфиденциальности",
   access: { read: () => true, update: ({ req }) => Boolean(req.user) },
+  hooks: {
+    afterChange: [revalidateGlobalAfterChange],
+  },
   fields: [
     localizedText("title", "Заголовок страницы", { required: true }),
     localizedText("lastUpdatedLabel", "Подпись «Обновлено»", { required: true }),
