@@ -28,6 +28,7 @@ import { Person } from "@/cms/globals/Person";
 import { FinancialPage, TravelPage } from "@/cms/globals/ProjectPages";
 import { SiteSettings } from "@/cms/globals/SiteSettings";
 
+import { emailAdapter } from "@/cms/email";
 import { storagePlugins } from "@/cms/storage";
 import { defaultLocale, locales } from "@/lib/locale";
 
@@ -123,6 +124,13 @@ export default buildConfig({
    * matters in production.
    */
   plugins: storagePlugins(),
+
+  /**
+   * Password-reset email. Undefined without RESEND_API_KEY, which falls back to
+   * Payload logging emails to the console — fine locally, broken in production.
+   * See src/cms/email.ts.
+   */
+  email: emailAdapter(),
 
   typescript: {
     outputFile: path.resolve(dirname, "cms/payload-types.ts"),
