@@ -6,8 +6,7 @@ import { StaggerGroup } from "@/components/animations/StaggerGroup";
 import { StaggerItem } from "@/components/animations/StaggerItem";
 import { SectionHeading } from "@/components/shared/content/SectionHeading";
 import { Card } from "@/components/ui/card";
-import { certificates } from "@/config/certificates";
-import type { Locale, SectionCopy } from "@/types";
+import type { Certificate, Locale, SectionCopy } from "@/types";
 
 /**
  * components/sections/CertificatesSection.tsx
@@ -17,7 +16,15 @@ import type { Locale, SectionCopy } from "@/types";
  * component, since a certificate tile is just an image + two lines of
  * text, not different enough from a plain card to justify one.
  */
-export function CertificatesSection({ content, locale = "en" }: { content: SectionCopy; locale?: Locale }) {
+export function CertificatesSection({
+  content,
+  certificates,
+  locale = "en",
+}: {
+  content: SectionCopy;
+  certificates: Certificate[];
+  locale?: Locale;
+}) {
   return (
     <AnimatedSection id="certificates">
       <Container>

@@ -2,8 +2,7 @@ import { AnimatedSection } from "@/components/layout/AnimatedSection";
 import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/shared/content/SectionHeading";
 import { GalleryPreviewGallery } from "./GalleryPreviewGallery";
-import { gallery } from "@/config/gallery";
-import type { Locale, ProjectId, SectionCopy } from "@/types";
+import type { GalleryImage, Locale, ProjectId, SectionCopy } from "@/types";
 
 /**
  * components/sections/GalleryPreviewSection.tsx
@@ -14,11 +13,13 @@ import type { Locale, ProjectId, SectionCopy } from "@/types";
  */
 export function GalleryPreviewSection({
   content,
+  gallery,
   project,
   id = "gallery",
   locale = "en",
 }: {
   content: SectionCopy;
+  gallery: GalleryImage[];
   project?: ProjectId;
   id?: string;
   locale?: Locale;

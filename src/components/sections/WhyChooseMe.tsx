@@ -4,8 +4,7 @@ import { StaggerGroup } from "@/components/animations/StaggerGroup";
 import { StaggerItem } from "@/components/animations/StaggerItem";
 import { SectionHeading } from "@/components/shared/content/SectionHeading";
 import { IconBox } from "@/components/shared/content/IconBox";
-import { whyChooseMe } from "@/config/why-choose-me";
-import type { Locale, SectionCopy } from "@/types";
+import type { Locale, SectionCopy, ValueProposition } from "@/types";
 
 /**
  * components/sections/WhyChooseMe.tsx
@@ -18,7 +17,15 @@ import type { Locale, SectionCopy } from "@/types";
  * the design system, just composed differently at the section level
  * rather than reaching for FeatureCard's boxed layout here.
  */
-export function WhyChooseMe({ content, locale = "en" }: { content: SectionCopy; locale?: Locale }) {
+export function WhyChooseMe({
+  content,
+  items: whyChooseMe,
+  locale = "en",
+}: {
+  content: SectionCopy;
+  items: ValueProposition[];
+  locale?: Locale;
+}) {
   return (
     <AnimatedSection id="why-choose-me">
       <Container className="max-w-4xl">

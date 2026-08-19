@@ -5,10 +5,17 @@ import { StaggerGroup } from "@/components/animations/StaggerGroup";
 import { StaggerItem } from "@/components/animations/StaggerItem";
 import { SectionHeading } from "@/components/shared/content/SectionHeading";
 import { StatCard } from "@/components/shared/stats/StatCard";
-import { achievements } from "@/config/achievements";
-import type { Locale, SectionCopy } from "@/types";
+import type { Locale, SectionCopy, Statistic } from "@/types";
 
-export function AchievementsSection({ content, locale = "en" }: { content: SectionCopy; locale?: Locale }) {
+export function AchievementsSection({
+  content,
+  achievements,
+  locale = "en",
+}: {
+  content: SectionCopy;
+  achievements: Statistic[];
+  locale?: Locale;
+}) {
   return (
     <AnimatedSection id="achievements" background="gradient">
       <Container>

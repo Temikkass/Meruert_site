@@ -10,11 +10,16 @@
  */
 
 import type { OrganizationSchema, PersonSchema, Project } from "@/types";
-import { person } from "@/config/person";
-import { siteSeo } from "@/config/seo";
-import { socialLinks } from "@/config/social";
+import { getPerson, getSocialLinks } from "@/lib/content";
+import { getSiteSeo } from "@/lib/seo";
 
-export function buildPersonSchema(): PersonSchema & { "@context": string; "@type": string } {
+export async function buildPersonSchema(): Promise<PersonSchema & { "@context": string; "@type": string }> {
+  const [person, siteSeo, socialLinks] = await Promise.all([
+    getPerson(),
+    getSiteSeo(),
+    getSocialLinks(),
+  ]);
+
   return {
     "@context": "https://schema.org",
     "@type": "Person",
@@ -38,9 +43,11 @@ export function buildPersonSchema(): PersonSchema & { "@context": string; "@type
   };
 }
 
-export function buildOrganizationSchema(
+export async function buildOrganizationSchema(
   project: Project
-): OrganizationSchema & { "@context": string; "@type": string } {
+): Promise<OrganizationSchema & { "@context": string; "@type": string }> {
+  const siteSeo = await getSiteSeo();
+
   return {
     "@context": "https://schema.org",
     "@type": "Organization",

@@ -2,8 +2,7 @@ import { AnimatedSection } from "@/components/layout/AnimatedSection";
 import { Container } from "@/components/layout/Container";
 import { SectionHeading } from "@/components/shared/content/SectionHeading";
 import { FaqAccordion } from "@/components/shared/faq/FaqAccordion";
-import { faq } from "@/config/faq";
-import type { Locale, ProjectId, SectionCopy } from "@/types";
+import type { FaqItem, Locale, ProjectId, SectionCopy } from "@/types";
 
 /**
  * components/sections/FaqPreviewSection.tsx
@@ -15,11 +14,13 @@ import type { Locale, ProjectId, SectionCopy } from "@/types";
  */
 export function FaqPreviewSection({
   content,
+  faq,
   project,
   id = "faq",
   locale = "en",
 }: {
   content: SectionCopy;
+  faq: FaqItem[];
   project?: ProjectId;
   id?: string;
   locale?: Locale;

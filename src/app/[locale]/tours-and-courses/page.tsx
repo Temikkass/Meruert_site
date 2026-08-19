@@ -20,21 +20,36 @@ import { FaqPreviewSection } from "@/components/sections/FaqPreviewSection";
 import { ProjectCtaSection } from "@/components/sections/ProjectCtaSection";
 import { createMetadata } from "@/lib/metadata";
 import { buildOrganizationSchema, serializeJsonLd } from "@/lib/json-ld";
-import { pageSeo } from "@/config/seo";
+import { getPageSeo } from "@/lib/seo";
 import { assertLocale } from "@/lib/locale";
-import { travelProject } from "@/config/travel";
-import { travelPageContent } from "@/config/travel-page";
+import {
+  getFaq,
+  getGallery,
+  getProjects,
+  getTestimonials,
+  getTravelPageContent,
+} from "@/lib/content";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const locale = assertLocale((await params).locale);
-  const seo = pageSeo[`/${travelProject.slug}`];
+  const seo = await getPageSeo("/tours-and-courses");
   return seo ? createMetadata(seo, locale) : {};
 }
 
 export default async function TravelPage({ params }: { params: Promise<{ locale: string }> }) {
   const locale = assertLocale((await params).locale);
+
+  const [projects, content, testimonials, gallery, faq] = await Promise.all([
+    getProjects(),
+    getTravelPageContent(),
+    getTestimonials(),
+    getGallery(),
+    getFaq(),
+  ]);
+
+  const travelProject = projects.travel;
   const [toursOffering, languageOffering, campsOffering] = travelProject.offerings;
-  const organizationSchema = buildOrganizationSchema(travelProject);
+  const organizationSchema = await buildOrganizationSchema(travelProject);
 
   return (
     <main data-project="travel">
@@ -42,32 +57,32 @@ export default async function TravelPage({ params }: { params: Promise<{ locale:
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(organizationSchema) }}
       />
-      <ProjectHero project={travelProject} content={travelPageContent.hero} locale={locale} />
-      <ProjectAboutSection project={travelProject} content={travelPageContent.about} locale={locale} />
+      <ProjectHero project={travelProject} content={content.hero} locale={locale} />
+      <ProjectAboutSection project={travelProject} content={content.about} locale={locale} />
       <OfferingsSection
         id="programs"
         offerings={travelProject.offerings}
-        content={travelPageContent.programs}
+        content={content.programs}
         locale={locale}
       />
       {toursOffering && (
-        <ProjectOfferingDetail offering={toursOffering} content={travelPageContent.tours} locale={locale} />
+        <ProjectOfferingDetail offering={toursOffering} content={content.tours} locale={locale} />
       )}
       {languageOffering && (
         <ProjectOfferingDetail
           offering={languageOffering}
-          content={travelPageContent.languageCourses}
+          content={content.languageCourses}
           reverse
           locale={locale}
         />
       )}
       {campsOffering && (
-        <ProjectOfferingDetail offering={campsOffering} content={travelPageContent.camps} locale={locale} />
+        <ProjectOfferingDetail offering={campsOffering} content={content.camps} locale={locale} />
       )}
-      <GalleryPreviewSection project="travel" content={travelPageContent.gallery} locale={locale} />
-      <TestimonialsSection id="reviews" project="travel" content={travelPageContent.reviews} locale={locale} />
-      <FaqPreviewSection project="travel" content={travelPageContent.faq} locale={locale} />
-      <ProjectCtaSection project={travelProject} content={travelPageContent.cta} locale={locale} />
+      <GalleryPreviewSection project="travel" gallery={gallery} content={content.gallery} locale={locale} />
+      <TestimonialsSection id="reviews" project="travel" reviews={testimonials} content={content.reviews} locale={locale} />
+      <FaqPreviewSection project="travel" faq={faq} content={content.faq} locale={locale} />
+      <ProjectCtaSection project={travelProject} content={content.cta} locale={locale} />
     </main>
   );
 }

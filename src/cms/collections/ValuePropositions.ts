@@ -5,10 +5,12 @@ import { localizedText, localizedTextarea, orderField } from "../fields/shared";
  * cms/collections/ValuePropositions.ts
  * ----------------------------------------------------------------------------
  * The icon + title + description cards. Mirrors `ValueProposition`
- * (src/types/content.ts), which already served two sections: the homepage's
- * "Why work with me" and the About page's "Mission & Values". `placement`
- * keeps them in one collection rather than two near-identical ones — the same
- * reasoning as `project` on the tagged content lists.
+ * (src/types/content.ts), which served FOUR separate config exports: the
+ * homepage's "Why work with me", the About page's "Mission & Values", and the
+ * Financial page's "Learning formats" and "Benefits". All four are the same
+ * shape rendered by the same <FeatureGridSection>, so `placement` keeps them
+ * in one collection rather than four near-identical ones — the same reasoning
+ * as `project` on the tagged content lists.
  */
 export const ValuePropositions: CollectionConfig = {
   slug: "value-propositions",
@@ -16,7 +18,7 @@ export const ValuePropositions: CollectionConfig = {
     group: "Контент",
     useAsTitle: "title",
     defaultColumns: ["title", "placement", "order"],
-    description: "Карточки с иконкой: «Почему я» на главной и «Миссия и ценности» на странице «Обо мне».",
+    description: "Карточки с иконкой и описанием. Поле «Где показывать» определяет раздел сайта.",
   },
   labels: { singular: "Карточка", plural: "Карточки с иконками" },
   access: {
@@ -43,6 +45,8 @@ export const ValuePropositions: CollectionConfig = {
       options: [
         { label: "Главная — «Почему я»", value: "why-choose-me" },
         { label: "Обо мне — «Миссия и ценности»", value: "mission-values" },
+        { label: "Финансовая грамотность — «Форматы обучения»", value: "financial-formats" },
+        { label: "Финансовая грамотность — «Что вы получите»", value: "financial-benefits" },
       ],
     },
     {

@@ -1,11 +1,15 @@
 /**
- * app/about/page.tsx
+ * app/[locale]/about/page.tsx
  * ----------------------------------------------------------------------------
- * Reuses <Hero> (the same person-focused hero component the homepage
- * uses) and <AboutPreview> (the same biography block) with About-specific
- * copy from config/about.ts — the homepage's version of both is a teaser;
- * this page is the full telling. Every other section here is unique to
- * this page: Mission & Values, Timeline, Achievements, Certificates.
+ * Reuses <Hero> (the same person-focused hero the homepage uses) and
+ * <AboutPreview> (the same biography block) with About-specific copy — the
+ * homepage's version of both is a teaser; this page is the full telling. Every
+ * other section here is unique to this page: Mission & Values, Timeline,
+ * Achievements, Certificates.
+ *
+ * Content comes from the CMS, fetched here and passed down as props. The
+ * biography itself lives on the `person` global rather than this page's own
+ * content, so the homepage teaser and this page cannot drift apart.
  */
 
 import type { Metadata } from "next";
@@ -18,36 +22,73 @@ import { CertificatesSection } from "@/components/sections/CertificatesSection";
 import { GalleryPreviewSection } from "@/components/sections/GalleryPreviewSection";
 import { CtaSection } from "@/components/sections/CtaSection";
 import { createMetadata } from "@/lib/metadata";
-import { pageSeo } from "@/config/seo";
+import { getPageSeo } from "@/lib/seo";
 import { assertLocale } from "@/lib/locale";
-import { aboutContent } from "@/config/about";
-import { missionValues } from "@/config/mission-values";
+import {
+  getAboutContent,
+  getAchievements,
+  getCertificates,
+  getGallery,
+  getMissionValues,
+  getPerson,
+  getProjects,
+  getTimeline,
+} from "@/lib/content";
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
   const locale = assertLocale((await params).locale);
-  const seo = pageSeo["/about"];
+  const seo = await getPageSeo("/about");
   return seo ? createMetadata(seo, locale) : {};
 }
 
 export default async function AboutPage({ params }: { params: Promise<{ locale: string }> }) {
   const locale = assertLocale((await params).locale);
 
+  const [content, person, missionValues, timeline, achievements, certificates, gallery, projects] =
+    await Promise.all([
+      getAboutContent(),
+      getPerson(),
+      getMissionValues(),
+      getTimeline(),
+      getAchievements(),
+      getCertificates(),
+      getGallery(),
+      getProjects(),
+    ]);
+
   return (
     <main>
-      <Hero content={aboutContent.hero} locale={locale} />
-      <AboutPreview content={aboutContent.biography} locale={locale} />
+      <Hero content={content.hero} person={person} locale={locale} />
+      <AboutPreview content={content.biography} person={person} locale={locale} />
       <FeatureGridSection
         id="mission-values"
         items={missionValues}
-        content={aboutContent.missionValues}
+        content={content.missionValues}
         background="card"
         locale={locale}
       />
-      <TimelineSection content={aboutContent.timeline} locale={locale} />
-      <AchievementsSection content={aboutContent.achievements} locale={locale} />
-      <CertificatesSection content={aboutContent.certificates} locale={locale} />
-      <GalleryPreviewSection content={aboutContent.gallery} locale={locale} />
-      <CtaSection content={aboutContent.cta} locale={locale} />
+      <TimelineSection content={content.timeline} timelineEntries={timeline} locale={locale} />
+      <AchievementsSection
+        content={content.achievements}
+        achievements={achievements}
+        locale={locale}
+      />
+      <CertificatesSection
+        content={content.certificates}
+        certificates={certificates}
+        locale={locale}
+      />
+      <GalleryPreviewSection content={content.gallery} gallery={gallery} locale={locale} />
+      <CtaSection
+        content={content.cta}
+        financialProject={projects.financial}
+        travelProject={projects.travel}
+        locale={locale}
+      />
     </main>
   );
 }

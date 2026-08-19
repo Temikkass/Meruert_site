@@ -19,20 +19,40 @@ import { FaqPreviewSection } from "@/components/sections/FaqPreviewSection";
 import { ProjectCtaSection } from "@/components/sections/ProjectCtaSection";
 import { createMetadata } from "@/lib/metadata";
 import { buildOrganizationSchema, serializeJsonLd } from "@/lib/json-ld";
-import { pageSeo } from "@/config/seo";
+import { getPageSeo } from "@/lib/seo";
 import { assertLocale } from "@/lib/locale";
-import { financialProject, financialLearningFormats, financialBenefits } from "@/config/financial";
-import { financialPageContent } from "@/config/financial-page";
+import {
+  getFaq,
+  getFinancialBenefits,
+  getFinancialLearningFormats,
+  getFinancialPageContent,
+  getGallery,
+  getProjects,
+  getTestimonials,
+} from "@/lib/content";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const locale = assertLocale((await params).locale);
-  const seo = pageSeo[`/${financialProject.slug}`];
+  const seo = await getPageSeo("/financial-literacy");
   return seo ? createMetadata(seo, locale) : {};
 }
 
 export default async function FinancialLiteracyPage({ params }: { params: Promise<{ locale: string }> }) {
   const locale = assertLocale((await params).locale);
-  const organizationSchema = buildOrganizationSchema(financialProject);
+
+  const [projects, content, learningFormats, benefits, testimonials, gallery, faq] =
+    await Promise.all([
+      getProjects(),
+      getFinancialPageContent(),
+      getFinancialLearningFormats(),
+      getFinancialBenefits(),
+      getTestimonials(),
+      getGallery(),
+      getFaq(),
+    ]);
+
+  const financialProject = projects.financial;
+  const organizationSchema = await buildOrganizationSchema(financialProject);
 
   return (
     <main data-project="financial">
@@ -40,36 +60,37 @@ export default async function FinancialLiteracyPage({ params }: { params: Promis
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(organizationSchema) }}
       />
-      <ProjectHero project={financialProject} content={financialPageContent.hero} locale={locale} />
-      <ProjectAboutSection project={financialProject} content={financialPageContent.about} locale={locale} />
+      <ProjectHero project={financialProject} content={content.hero} locale={locale} />
+      <ProjectAboutSection project={financialProject} content={content.about} locale={locale} />
       <OfferingsSection
         id="services"
         offerings={financialProject.offerings}
-        content={financialPageContent.services}
+        content={content.services}
         locale={locale}
       />
       <FeatureGridSection
         id="learning-formats"
-        items={financialLearningFormats}
-        content={financialPageContent.learningFormats}
+        items={learningFormats}
+        content={content.learningFormats}
         background="card"
         locale={locale}
       />
       <FeatureGridSection
         id="benefits"
-        items={financialBenefits}
-        content={financialPageContent.benefits}
+        items={benefits}
+        content={content.benefits}
         locale={locale}
       />
       <TestimonialsSection
         id="success-stories"
         project="financial"
-        content={financialPageContent.successStories}
+        reviews={testimonials}
+        content={content.successStories}
         locale={locale}
       />
-      <GalleryPreviewSection project="financial" content={financialPageContent.gallery} locale={locale} />
-      <FaqPreviewSection project="financial" content={financialPageContent.faq} locale={locale} />
-      <ProjectCtaSection project={financialProject} content={financialPageContent.cta} locale={locale} />
+      <GalleryPreviewSection project="financial" gallery={gallery} content={content.gallery} locale={locale} />
+      <FaqPreviewSection project="financial" faq={faq} content={content.faq} locale={locale} />
+      <ProjectCtaSection project={financialProject} content={content.cta} locale={locale} />
     </main>
   );
 }

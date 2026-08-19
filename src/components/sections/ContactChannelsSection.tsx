@@ -9,10 +9,7 @@ import { SocialButton } from "@/components/shared/buttons/SocialButton";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { createWhatsappLink } from "@/lib/phone";
-import { financialProject } from "@/config/financial";
-import { travelProject } from "@/config/travel";
-import { person } from "@/config/person";
-import type { ContactPageContent, Locale } from "@/types";
+import type { ContactPageContent, Locale, Person, Project } from "@/types";
 
 /**
  * components/sections/ContactChannelsSection.tsx
@@ -34,13 +31,15 @@ import type { ContactPageContent, Locale } from "@/types";
  */
 export function ContactChannelsSection({
   content,
+  projects,
+  person,
   locale = "en",
 }: {
   content: ContactPageContent;
+  projects: Project[];
+  person: Person;
   locale?: Locale;
 }) {
-  const projects = [financialProject, travelProject];
-
   return (
     <AnimatedSection id="channels">
       <Container>

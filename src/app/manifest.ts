@@ -1,6 +1,5 @@
 import type { MetadataRoute } from "next";
-import { siteSeo } from "@/config/seo";
-import { person } from "@/config/person";
+import { getPerson, getSiteSettings } from "@/lib/content";
 import { defaultLocale, htmlLang } from "@/lib/locale";
 
 /**
@@ -16,11 +15,13 @@ import { defaultLocale, htmlLang } from "@/lib/locale";
  * than oklch() because manifest consumers are OS-level UI, not the browser's
  * CSS engine, and support for oklch here is not universal.
  */
-export default function manifest(): MetadataRoute.Manifest {
+export default async function manifest(): Promise<MetadataRoute.Manifest> {
+  const [person, settings] = await Promise.all([getPerson(), getSiteSettings()]);
+
   return {
-    name: siteSeo.siteName,
-    short_name: person.fullName.split(" ")[0] ?? siteSeo.siteName,
-    description: siteSeo.defaultDescription[defaultLocale],
+    name: person.fullName,
+    short_name: person.fullName.split(" ")[0] ?? person.fullName,
+    description: settings.defaultDescription[defaultLocale],
     lang: htmlLang[defaultLocale],
     start_url: "/",
     display: "standalone",

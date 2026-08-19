@@ -18,10 +18,17 @@ import { StaggerItem } from "@/components/animations/StaggerItem";
 import { SectionHeading } from "@/components/shared/content/SectionHeading";
 import { Badge } from "@/components/ui/badge";
 import { fadeLeft, fadeRight } from "@/lib/animations/variants";
-import { person } from "@/config/person";
-import type { Locale, SectionCopy } from "@/types";
+import type { Locale, Person, SectionCopy } from "@/types";
 
-export function AboutPreview({ content, locale = "en" }: { content: SectionCopy; locale?: Locale }) {
+export function AboutPreview({
+  content,
+  person,
+  locale = "en",
+}: {
+  content: SectionCopy;
+  person: Person;
+  locale?: Locale;
+}) {
   return (
     <AnimatedSection id="about">
       <Container>

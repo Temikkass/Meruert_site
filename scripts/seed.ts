@@ -4,28 +4,28 @@ import { getPayload, type Payload } from "payload";
 
 import config from "../src/payload.config.js";
 
-import { person } from "../src/config/person.js";
-import { homeContent } from "../src/config/home.js";
-import { aboutContent } from "../src/config/about.js";
-import { contactPageContent } from "../src/config/contact-page.js";
-import { financialPageContent } from "../src/config/financial-page.js";
-import { travelPageContent } from "../src/config/travel-page.js";
-import { privacyPolicyContent } from "../src/config/legal.js";
-import { siteSeo } from "../src/config/seo.js";
-import { footerColumns, footerOwnerName, footerCopyrightNotice } from "../src/config/footer.js";
-import { financialProject } from "../src/config/financial.js";
-import { travelProject } from "../src/config/travel.js";
-import { gallery as galleryImages } from "../src/config/gallery.js";
-import { faq as faqItems } from "../src/config/faq.js";
-import { reviews as testimonials } from "../src/config/reviews.js";
-import { statistics } from "../src/config/statistics.js";
-import { achievements } from "../src/config/achievements.js";
-import { whyChooseMe } from "../src/config/why-choose-me.js";
-import { missionValues } from "../src/config/mission-values.js";
-import { timelineEntries } from "../src/config/timeline.js";
-import { certificates } from "../src/config/certificates.js";
-import { socialLinks } from "../src/config/social.js";
-import { primaryNav } from "../src/config/navigation.js";
+import { person } from "../src/seed-data/person.js";
+import { homeContent } from "../src/seed-data/home.js";
+import { aboutContent } from "../src/seed-data/about.js";
+import { contactPageContent } from "../src/seed-data/contact-page.js";
+import { financialPageContent } from "../src/seed-data/financial-page.js";
+import { travelPageContent } from "../src/seed-data/travel-page.js";
+import { privacyPolicyContent } from "../src/seed-data/legal.js";
+import { siteSeo } from "../src/seed-data/seo.js";
+import { footerColumns, footerOwnerName, footerCopyrightNotice } from "../src/seed-data/footer.js";
+import { financialProject, financialLearningFormats, financialBenefits } from "../src/seed-data/financial.js";
+import { travelProject } from "../src/seed-data/travel.js";
+import { gallery as galleryImages } from "../src/seed-data/gallery.js";
+import { faq as faqItems } from "../src/seed-data/faq.js";
+import { reviews as testimonials } from "../src/seed-data/reviews.js";
+import { statistics } from "../src/seed-data/statistics.js";
+import { achievements } from "../src/seed-data/achievements.js";
+import { whyChooseMe } from "../src/seed-data/why-choose-me.js";
+import { missionValues } from "../src/seed-data/mission-values.js";
+import { timelineEntries } from "../src/seed-data/timeline.js";
+import { certificates } from "../src/seed-data/certificates.js";
+import { socialLinks } from "../src/seed-data/social.js";
+import { primaryNav } from "../src/seed-data/navigation.js";
 
 import { defaultLocale, locales } from "../src/lib/locale.js";
 import type { ImageAsset, Locale, LocalizedText, SectionCopy } from "../src/types/index.js";
@@ -361,6 +361,8 @@ async function main() {
   for (const [placement, items] of [
     ["why-choose-me", whyChooseMe],
     ["mission-values", missionValues],
+    ["financial-formats", financialLearningFormats],
+    ["financial-benefits", financialBenefits],
   ] as const) {
     for (const [index, item] of items.entries()) {
       await createLocalized(payload, "value-propositions", (locale) => ({

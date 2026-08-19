@@ -389,7 +389,7 @@ export interface Statistic {
   createdAt: string;
 }
 /**
- * Карточки с иконкой: «Почему я» на главной и «Миссия и ценности» на странице «Обо мне».
+ * Карточки с иконкой и описанием. Поле «Где показывать» определяет раздел сайта.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "value-propositions".
@@ -400,7 +400,7 @@ export interface ValueProposition {
    * Видно только в админ-панели.
    */
   title: string;
-  placement: 'why-choose-me' | 'mission-values';
+  placement: 'why-choose-me' | 'mission-values' | 'financial-formats' | 'financial-benefits';
   icon: 'star' | 'compass' | 'wallet' | 'trending-up' | 'languages' | 'tent' | 'check' | 'info';
   heading: string;
   description: string;
