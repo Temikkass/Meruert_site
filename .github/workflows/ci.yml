@@ -1,9 +1,16 @@
 name: CI
 
-# Runs the same four checks as `npm run verify`, on every push and PR.
+# Runs the same checks as `npm run verify`, on every push and PR.
+#
 # `next build` is included deliberately and is not redundant with `tsc`:
 # typedRoutes generates its route-literal union at build time, so a typo'd
 # href is only caught here.
+#
+# The build now needs a DATABASE with content in it. Every page reads its copy
+# from the CMS and is statically prerendered, so a build against an empty
+# database would succeed while producing blank pages — which is why this
+# workflow migrates and seeds before building, rather than just starting
+# Postgres.
 on:
   push:
     branches: ["**"]
@@ -12,6 +19,30 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: meruert
+        ports:
+          - 5432:5432
+        # Without this the first migration can race the server's startup.
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/meruert
+      # CI-only value. The real secret lives in the host's environment; see
+      # .env.example for how to generate one.
+      PAYLOAD_SECRET: ci-only-secret-not-used-outside-this-job
+      NEXT_PUBLIC_SITE_URL: https://example.com
+
     steps:
       - uses: actions/checkout@v4
 
@@ -26,8 +57,17 @@ jobs:
       - run: npm run lint
       - run: npm run test
 
+      # Schema first, then content, then build. Seeding from src/seed-data
+      # keeps CI building the same pages a fresh checkout would.
+      - name: Apply database migrations
+        run: npm run cms:migrate
+
+      - name: Seed content
+        run: npm run seed
+
+      - name: Verify every collection and global responds
+        run: npm run cms:verify
+
       # next/font/google downloads and self-hosts the three families at build
       # time, so this step needs network egress to fonts.googleapis.com.
       - run: npm run build
-        env:
-          NEXT_PUBLIC_SITE_URL: https://example.com

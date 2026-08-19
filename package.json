@@ -13,14 +13,14 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "verify": "npm run typecheck && npm run lint && npm run test && npm run build",
-    "admin:create": "tsx --env-file=.env.local scripts/create-admin.ts",
+    "admin:create": "tsx --env-file-if-exists=.env.local scripts/create-admin.ts",
     "db:start": "pg_ctl -D .postgres/data -o \"-p 5433\" -l .postgres/server.log start",
     "db:stop": "pg_ctl -D .postgres/data stop",
     "db:status": "pg_ctl -D .postgres/data status",
-    "cms:verify": "tsx --env-file=.env.local scripts/verify-cms.ts",
+    "cms:verify": "tsx --env-file-if-exists=.env.local scripts/verify-cms.ts",
     "cms:types": "payload generate:types",
     "cms:migrate": "payload migrate",
-    "seed": "tsx --env-file=.env.local scripts/seed.ts"
+    "seed": "tsx --env-file-if-exists=.env.local scripts/seed.ts"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "^3.88.0",
