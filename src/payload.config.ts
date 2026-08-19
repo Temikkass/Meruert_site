@@ -8,7 +8,6 @@ import { ru } from "@payloadcms/translations/languages/ru";
 import { buildConfig } from "payload";
 import sharp from "sharp";
 
-import { Achievements } from "@/cms/collections/Achievements";
 import { Certificates } from "@/cms/collections/Certificates";
 import { Faq } from "@/cms/collections/Faq";
 import { Gallery } from "@/cms/collections/Gallery";
@@ -80,7 +79,6 @@ export default buildConfig({
     ValuePropositions,
     Timeline,
     Certificates,
-    Achievements,
     SocialLinks,
     Media,
     Users,

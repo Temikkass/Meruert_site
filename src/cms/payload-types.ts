@@ -75,7 +75,6 @@ export interface Config {
     'value-propositions': ValueProposition;
     timeline: Timeline;
     certificates: Certificate;
-    achievements: Achievement;
     'social-links': SocialLink;
     media: Media;
     users: User;
@@ -94,7 +93,6 @@ export interface Config {
     'value-propositions': ValuePropositionsSelect<false> | ValuePropositionsSelect<true>;
     timeline: TimelineSelect<false> | TimelineSelect<true>;
     certificates: CertificatesSelect<false> | CertificatesSelect<true>;
-    achievements: AchievementsSelect<false> | AchievementsSelect<true>;
     'social-links': SocialLinksSelect<false> | SocialLinksSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
@@ -378,6 +376,7 @@ export interface Statistic {
    * Что означает это число. Например: «учеников».
    */
   label: string;
+  placement: 'home' | 'about';
   /**
    * Определяет, на какой странице показывается эта запись.
    */
@@ -457,26 +456,6 @@ export interface Certificate {
    * Рекомендуемый размер: 800×600.
    */
   image: number | Media;
-  /**
-   * Чем меньше число, тем выше запись в списке.
-   */
-  order: number;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * Короткие достижения — по одной строке каждое.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "achievements".
- */
-export interface Achievement {
-  id: number;
-  /**
-   * Видно только в админ-панели.
-   */
-  title: string;
-  label: string;
   /**
    * Чем меньше число, тем выше запись в списке.
    */
@@ -598,10 +577,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'certificates';
         value: number | Certificate;
-      } | null)
-    | ({
-        relationTo: 'achievements';
-        value: number | Achievement;
       } | null)
     | ({
         relationTo: 'social-links';
@@ -747,6 +722,7 @@ export interface StatisticsSelect<T extends boolean = true> {
   prefix?: T;
   suffix?: T;
   label?: T;
+  placement?: T;
   project?: T;
   order?: T;
   updatedAt?: T;
@@ -787,17 +763,6 @@ export interface CertificatesSelect<T extends boolean = true> {
   name?: T;
   issuer?: T;
   image?: T;
-  order?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "achievements_select".
- */
-export interface AchievementsSelect<T extends boolean = true> {
-  title?: T;
-  label?: T;
   order?: T;
   updatedAt?: T;
   createdAt?: T;

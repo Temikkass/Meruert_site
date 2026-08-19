@@ -19,7 +19,8 @@
     "db:status": "pg_ctl -D .postgres/data status",
     "cms:verify": "tsx --env-file=.env.local scripts/verify-cms.ts",
     "cms:types": "payload generate:types",
-    "cms:migrate": "payload migrate"
+    "cms:migrate": "payload migrate",
+    "seed": "tsx --env-file=.env.local scripts/seed.ts"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "^3.88.0",

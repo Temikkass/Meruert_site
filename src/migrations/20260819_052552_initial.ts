@@ -8,6 +8,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE TYPE "public"."enum_gallery_project" AS ENUM('shared', 'financial', 'travel');
   CREATE TYPE "public"."enum_testimonials_project" AS ENUM('shared', 'financial', 'travel');
   CREATE TYPE "public"."enum_faq_project" AS ENUM('shared', 'financial', 'travel');
+  CREATE TYPE "public"."enum_statistics_placement" AS ENUM('home', 'about');
   CREATE TYPE "public"."enum_statistics_project" AS ENUM('shared', 'financial', 'travel');
   CREATE TYPE "public"."enum_value_propositions_placement" AS ENUM('why-choose-me', 'mission-values');
   CREATE TYPE "public"."enum_value_propositions_icon" AS ENUM('star', 'compass', 'wallet', 'trending-up', 'languages', 'tent', 'check', 'info');
@@ -126,6 +127,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"value" numeric NOT NULL,
   	"prefix" varchar,
   	"suffix" varchar,
+  	"placement" "enum_statistics_placement" DEFAULT 'home' NOT NULL,
   	"project" "enum_statistics_project" DEFAULT 'shared' NOT NULL,
   	"order" numeric DEFAULT 0 NOT NULL,
   	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
@@ -185,21 +187,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE TABLE "certificates_locales" (
   	"name" varchar NOT NULL,
   	"issuer" varchar,
-  	"id" serial PRIMARY KEY NOT NULL,
-  	"_locale" "_locales" NOT NULL,
-  	"_parent_id" integer NOT NULL
-  );
-  
-  CREATE TABLE "achievements" (
-  	"id" serial PRIMARY KEY NOT NULL,
-  	"title" varchar NOT NULL,
-  	"order" numeric DEFAULT 0 NOT NULL,
-  	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
-  	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
-  );
-  
-  CREATE TABLE "achievements_locales" (
-  	"label" varchar NOT NULL,
   	"id" serial PRIMARY KEY NOT NULL,
   	"_locale" "_locales" NOT NULL,
   	"_parent_id" integer NOT NULL
@@ -286,7 +273,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"value_propositions_id" integer,
   	"timeline_id" integer,
   	"certificates_id" integer,
-  	"achievements_id" integer,
   	"social_links_id" integer,
   	"media_id" integer,
   	"users_id" integer
@@ -652,7 +638,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "timeline_locales" ADD CONSTRAINT "timeline_locales_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."timeline"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "certificates" ADD CONSTRAINT "certificates_image_id_media_id_fk" FOREIGN KEY ("image_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "certificates_locales" ADD CONSTRAINT "certificates_locales_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."certificates"("id") ON DELETE cascade ON UPDATE no action;
-  ALTER TABLE "achievements_locales" ADD CONSTRAINT "achievements_locales_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."achievements"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "media_locales" ADD CONSTRAINT "media_locales_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."media"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "users_sessions" ADD CONSTRAINT "users_sessions_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_parent_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."payload_locked_documents"("id") ON DELETE cascade ON UPDATE no action;
@@ -664,7 +649,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_value_propositions_fk" FOREIGN KEY ("value_propositions_id") REFERENCES "public"."value_propositions"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_timeline_fk" FOREIGN KEY ("timeline_id") REFERENCES "public"."timeline"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_certificates_fk" FOREIGN KEY ("certificates_id") REFERENCES "public"."certificates"("id") ON DELETE cascade ON UPDATE no action;
-  ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_achievements_fk" FOREIGN KEY ("achievements_id") REFERENCES "public"."achievements"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_social_links_fk" FOREIGN KEY ("social_links_id") REFERENCES "public"."social_links"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_media_fk" FOREIGN KEY ("media_id") REFERENCES "public"."media"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_users_fk" FOREIGN KEY ("users_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
@@ -729,9 +713,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "certificates_updated_at_idx" ON "certificates" USING btree ("updated_at");
   CREATE INDEX "certificates_created_at_idx" ON "certificates" USING btree ("created_at");
   CREATE UNIQUE INDEX "certificates_locales_locale_parent_id_unique" ON "certificates_locales" USING btree ("_locale","_parent_id");
-  CREATE INDEX "achievements_updated_at_idx" ON "achievements" USING btree ("updated_at");
-  CREATE INDEX "achievements_created_at_idx" ON "achievements" USING btree ("created_at");
-  CREATE UNIQUE INDEX "achievements_locales_locale_parent_id_unique" ON "achievements_locales" USING btree ("_locale","_parent_id");
   CREATE INDEX "social_links_updated_at_idx" ON "social_links" USING btree ("updated_at");
   CREATE INDEX "social_links_created_at_idx" ON "social_links" USING btree ("created_at");
   CREATE INDEX "media_updated_at_idx" ON "media" USING btree ("updated_at");
@@ -758,7 +739,6 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "payload_locked_documents_rels_value_propositions_id_idx" ON "payload_locked_documents_rels" USING btree ("value_propositions_id");
   CREATE INDEX "payload_locked_documents_rels_timeline_id_idx" ON "payload_locked_documents_rels" USING btree ("timeline_id");
   CREATE INDEX "payload_locked_documents_rels_certificates_id_idx" ON "payload_locked_documents_rels" USING btree ("certificates_id");
-  CREATE INDEX "payload_locked_documents_rels_achievements_id_idx" ON "payload_locked_documents_rels" USING btree ("achievements_id");
   CREATE INDEX "payload_locked_documents_rels_social_links_id_idx" ON "payload_locked_documents_rels" USING btree ("social_links_id");
   CREATE INDEX "payload_locked_documents_rels_media_id_idx" ON "payload_locked_documents_rels" USING btree ("media_id");
   CREATE INDEX "payload_locked_documents_rels_users_id_idx" ON "payload_locked_documents_rels" USING btree ("users_id");
@@ -823,8 +803,6 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TABLE "timeline_locales" CASCADE;
   DROP TABLE "certificates" CASCADE;
   DROP TABLE "certificates_locales" CASCADE;
-  DROP TABLE "achievements" CASCADE;
-  DROP TABLE "achievements_locales" CASCADE;
   DROP TABLE "social_links" CASCADE;
   DROP TABLE "media" CASCADE;
   DROP TABLE "media_locales" CASCADE;
@@ -870,6 +848,7 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TYPE "public"."enum_gallery_project";
   DROP TYPE "public"."enum_testimonials_project";
   DROP TYPE "public"."enum_faq_project";
+  DROP TYPE "public"."enum_statistics_placement";
   DROP TYPE "public"."enum_statistics_project";
   DROP TYPE "public"."enum_value_propositions_placement";
   DROP TYPE "public"."enum_value_propositions_icon";

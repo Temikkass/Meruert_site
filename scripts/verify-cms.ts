@@ -24,7 +24,6 @@ const EXPECTED_COLLECTIONS = [
   "value-propositions",
   "timeline",
   "certificates",
-  "achievements",
   "social-links",
   "media",
   "users",

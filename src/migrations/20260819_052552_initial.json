@@ -1227,6 +1227,14 @@
           "primaryKey": false,
           "notNull": false
         },
+        "placement": {
+          "name": "placement",
+          "type": "enum_statistics_placement",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'home'"
+        },
         "project": {
           "name": "project",
           "type": "enum_statistics_project",
@@ -1876,157 +1884,6 @@
           "name": "certificates_locales_parent_id_fk",
           "tableFrom": "certificates_locales",
           "tableTo": "certificates",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.achievements": {
-      "name": "achievements",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "title": {
-          "name": "title",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "order": {
-          "name": "order",
-          "type": "numeric",
-          "primaryKey": false,
-          "notNull": true,
-          "default": 0
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp(3) with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp(3) with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {
-        "achievements_updated_at_idx": {
-          "name": "achievements_updated_at_idx",
-          "columns": [
-            {
-              "expression": "updated_at",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "achievements_created_at_idx": {
-          "name": "achievements_created_at_idx",
-          "columns": [
-            {
-              "expression": "created_at",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.achievements_locales": {
-      "name": "achievements_locales",
-      "schema": "",
-      "columns": {
-        "label": {
-          "name": "label",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "_locale": {
-          "name": "_locale",
-          "type": "_locales",
-          "typeSchema": "public",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "_parent_id": {
-          "name": "_parent_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {
-        "achievements_locales_locale_parent_id_unique": {
-          "name": "achievements_locales_locale_parent_id_unique",
-          "columns": [
-            {
-              "expression": "_locale",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "_parent_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": true,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "achievements_locales_parent_id_fk": {
-          "name": "achievements_locales_parent_id_fk",
-          "tableFrom": "achievements_locales",
-          "tableTo": "achievements",
           "columnsFrom": [
             "_parent_id"
           ],
@@ -2772,12 +2629,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "achievements_id": {
-          "name": "achievements_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
         "social_links_id": {
           "name": "social_links_id",
           "type": "integer",
@@ -2963,21 +2814,6 @@
           "method": "btree",
           "with": {}
         },
-        "payload_locked_documents_rels_achievements_id_idx": {
-          "name": "payload_locked_documents_rels_achievements_id_idx",
-          "columns": [
-            {
-              "expression": "achievements_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
         "payload_locked_documents_rels_social_links_id_idx": {
           "name": "payload_locked_documents_rels_social_links_id_idx",
           "columns": [
@@ -3135,19 +2971,6 @@
           "tableTo": "certificates",
           "columnsFrom": [
             "certificates_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "payload_locked_documents_rels_achievements_fk": {
-          "name": "payload_locked_documents_rels_achievements_fk",
-          "tableFrom": "payload_locked_documents_rels",
-          "tableTo": "achievements",
-          "columnsFrom": [
-            "achievements_id"
           ],
           "columnsTo": [
             "id"
@@ -6174,6 +5997,14 @@
         "travel"
       ]
     },
+    "public.enum_statistics_placement": {
+      "name": "enum_statistics_placement",
+      "schema": "public",
+      "values": [
+        "home",
+        "about"
+      ]
+    },
     "public.enum_statistics_project": {
       "name": "enum_statistics_project",
       "schema": "public",
@@ -6248,6 +6079,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "55f88592-bbe9-4878-ab22-c18715b13a5f",
+  "id": "cc3bbad5-3862-4071-9aeb-c2a5fd4bd245",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }
