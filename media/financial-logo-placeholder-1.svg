@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 80" width="240" height="80" role="img" aria-label="Financial project logo placeholder">
-  <rect width="240" height="80" rx="8" fill="none"/>
-  <circle cx="34" cy="40" r="18" fill="none" stroke="#8b869c" stroke-width="2"/>
-  <path d="M26 44 L32 36 L38 41 L46 31" fill="none" stroke="#8b869c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-  <text x="66" y="46" font-family="sans-serif" font-size="17" fill="#8b869c">Logo placeholder</text>
-</svg>
