@@ -9,7 +9,7 @@ import { createDefaultMetadata } from "@/lib/metadata";
 import { buildPersonSchema, serializeJsonLd } from "@/lib/json-ld";
 import { SKIP_TARGET_ID } from "@/lib/constants";
 import { assertLocale, htmlLang, locales } from "@/lib/locale";
-import { getPerson, getPrimaryNav, getSiteSettings, getSocialLinks } from "@/lib/content";
+import { getPerson, getPrimaryNav, getProjects, getSiteSettings, getSocialLinks } from "@/lib/content";
 import "../globals.css";
 
 /**
@@ -83,13 +83,22 @@ export default async function RootLayout({
   const { locale: rawLocale } = await params;
   const locale = assertLocale(rawLocale);
 
-  const [personSchema, person, nav, settings, socialLinks] = await Promise.all([
+  // getProjects() costs no extra query here: getPrimaryNav() already calls it
+  // and both are cache()d for the render pass.
+  const [personSchema, person, nav, settings, socialLinks, projects] = await Promise.all([
     buildPersonSchema(),
     getPerson(),
     getPrimaryNav(),
     getSiteSettings(),
     getSocialLinks(),
+    getProjects(),
   ]);
+
+  // Captions for the footer's social groups, in the visitor's language.
+  const projectNames = {
+    financial: projects.financial.name[locale],
+    travel: projects.travel.name[locale],
+  };
 
   return (
     <html lang={htmlLang[locale]} className={fontVariables} suppressHydrationWarning>
@@ -119,6 +128,7 @@ export default async function RootLayout({
             ownerName={settings.footerOwnerName}
             copyrightNotice={settings.footerCopyrightNotice}
             socialLinks={socialLinks}
+            projectNames={projectNames}
             locale={locale}
           />
         </AppProviders>

@@ -90,7 +90,7 @@ export function MobileMenu({
                   ))}
                 </nav>
 
-                <SocialIconRow links={socialLinks} className="justify-center pb-4" />
+                <SocialIconRow links={socialLinks} locale={locale} className="justify-center pb-4" />
               </motion.div>
             </DialogPrimitive.Content>
           </DialogPrimitive.Portal>

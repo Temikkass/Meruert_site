@@ -14,7 +14,8 @@
  * pre-filled message) rather than deriving one internally, so callers pass
  * `href={createWhatsappLink(channel, locale)}` (lib/phone.ts) — this
  * component doesn't know about locale or message text, only how to render
- * a link once it has one.
+ * a link once it has one. `label` follows the same rule: the caller knows
+ * the locale and the surrounding context, this component does not.
  */
 
 import { Button } from "@/components/ui/button";
@@ -32,27 +33,35 @@ const platformIcon: Record<SocialPlatform, IconKey> = {
   phone: "phone",
 };
 
-const platformLabel: Record<SocialPlatform, string> = {
-  instagram: "Instagram",
-  telegram: "Telegram",
-  whatsapp: "WhatsApp",
-  email: "Email",
-  phone: "Call",
-};
-
 export interface SocialButtonProps {
   platform: SocialPlatform;
   href: string;
+  /**
+   * The button's accessible name. Required, and supplied by the caller,
+   * because it has to be BOTH localized and disambiguating — the footer
+   * shows two Instagram icons (one per project) and passes
+   * "Instagram — Туры и курсы" so they do not announce identically.
+   * This used to be an internal English lookup table; see
+   * config/system.ts#socialPlatformLabels for why that was wrong.
+   */
+  label: string;
   size?: "sm" | "md" | "lg";
   className?: string;
   magnetic?: boolean;
 }
 
-export function SocialButton({ platform, href, size = "md", className, magnetic = true }: SocialButtonProps) {
+export function SocialButton({
+  platform,
+  href,
+  label,
+  size = "md",
+  className,
+  magnetic = true,
+}: SocialButtonProps) {
   const isExternal = platform !== "email" && platform !== "phone";
 
   const button = (
-    <Button asChild variant="social" size="icon" className={className} aria-label={platformLabel[platform]}>
+    <Button asChild variant="social" size="icon" className={className} aria-label={label}>
       <a href={href} target={isExternal ? "_blank" : undefined} rel={isExternal ? "noopener noreferrer" : undefined}>
         <Icon name={platformIcon[platform]} size={size === "lg" ? "md" : "sm"} />
       </a>

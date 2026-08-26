@@ -5,6 +5,12 @@
  * renaming a footer link/column is a config edit, never a change here. The
  * copyright year is computed (`new Date().getFullYear()`), never a
  * hardcoded string that goes stale every January.
+ *
+ * Social icons are GROUPED BY PROJECT here, unlike on the project pages: the
+ * footer is the one place showing both projects' channels together, and the
+ * client runs a separate Instagram, Telegram and WhatsApp for each. A flat row
+ * put two identical Instagram glyphs next to each other with nothing to
+ * distinguish them.
  */
 
 import Link from "next/link";
@@ -13,7 +19,7 @@ import { Container } from "./Container";
 import { Divider } from "./Divider";
 import { SocialIconRow } from "@/components/shared/buttons/SocialIconRow";
 import { localizedPath } from "@/lib/routes";
-import type { Locale, LocalizedText, SocialLink } from "@/types";
+import type { Locale, LocalizedText, ProjectId, SocialLink } from "@/types";
 
 export interface FooterColumn {
   title: LocalizedText;
@@ -25,12 +31,19 @@ export function Footer({
   ownerName,
   copyrightNotice,
   socialLinks,
+  projectNames,
   locale = "en",
 }: {
   columns: FooterColumn[];
   ownerName: string;
   copyrightNotice: LocalizedText;
   socialLinks: SocialLink[];
+  /**
+   * Display name per project, used to caption each group of social icons.
+   * The footer shows both projects' channels at once, so without these the
+   * two Instagram icons would be indistinguishable — see SocialIconRow.
+   */
+  projectNames: Partial<Record<ProjectId | "shared", string>>;
   locale?: Locale;
 }) {
   return (
@@ -41,7 +54,7 @@ export function Footer({
         <div className="flex flex-col gap-10 py-12 md:flex-row md:justify-between">
           <div className="flex flex-col gap-4">
             <span className="font-display text-body-lg font-semibold text-ink">{ownerName}</span>
-            <SocialIconRow links={socialLinks} />
+            <SocialIconRow links={socialLinks} locale={locale} groupLabels={projectNames} />
           </div>
 
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-2 md:flex md:gap-16">

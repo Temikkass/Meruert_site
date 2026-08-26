@@ -24,6 +24,7 @@ import { Parallax } from "@/components/animations/Parallax";
 import { TextReveal } from "@/components/animations/TextReveal";
 import { Eyebrow } from "@/components/shared/content/Eyebrow";
 import { SocialButton } from "@/components/shared/buttons/SocialButton";
+import { socialLabel } from "@/lib/social";
 import { WhatsAppButton } from "@/components/shared/buttons/WhatsAppButton";
 import { fadeUp, imageReveal } from "@/lib/animations/variants";
 import { Container } from "@/components/layout/Container";
@@ -63,11 +64,18 @@ export function ProjectHero({
 
             <Reveal variants={fadeUp} delay={0.3}>
               <div className="flex flex-wrap items-center gap-3">
-                {instagram && <SocialButton platform="instagram" href={instagram.url} />}
+                {instagram && (
+                  <SocialButton
+                    platform="instagram"
+                    href={instagram.url}
+                    label={socialLabel("instagram", locale)}
+                  />
+                )}
                 {telegram && (
                   <SocialButton
                     platform="telegram"
                     href={telegram.url ?? `https://t.me/${telegram.username}`}
+                    label={socialLabel("telegram", locale)}
                   />
                 )}
                 {whatsapp && <WhatsAppButton channel={whatsapp} locale={locale} />}

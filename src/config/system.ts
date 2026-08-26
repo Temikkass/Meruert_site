@@ -74,3 +74,28 @@ export const languageSwitcherLabel: LocalizedText = {
   ru: "Сменить язык",
   kk: "Тілді ауыстыру",
 };
+
+/**
+ * Accessible names for the social channel icons
+ * (components/shared/buttons/SocialButton.tsx).
+ *
+ * These lived in SocialButton as a hardcoded English map passed straight to
+ * `aria-label`, which meant every assistive technology announced "Instagram",
+ * "Email", "Call" — in English — on a site that ships in three languages.
+ * Nothing showed it, because an icon button's label is invisible unless you
+ * are using a screen reader.
+ *
+ * Brand names stay untranslated (Instagram and WhatsApp are spelled the same
+ * everywhere); only the generic channels — mail and phone — actually differ
+ * per language.
+ */
+export const socialPlatformLabels: Record<
+  "instagram" | "telegram" | "whatsapp" | "email" | "phone",
+  LocalizedText
+> = {
+  instagram: { en: "Instagram", ru: "Instagram", kk: "Instagram" },
+  telegram: { en: "Telegram", ru: "Telegram", kk: "Telegram" },
+  whatsapp: { en: "WhatsApp", ru: "WhatsApp", kk: "WhatsApp" },
+  email: { en: "Email", ru: "Электронная почта", kk: "Электрондық пошта" },
+  phone: { en: "Call", ru: "Позвонить", kk: "Қоңырау шалу" },
+};

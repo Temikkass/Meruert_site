@@ -3,6 +3,7 @@ import { Container } from "@/components/layout/Container";
 import { Stack } from "@/components/layout/Stack";
 import { Reveal } from "@/components/animations/Reveal";
 import { SocialButton } from "@/components/shared/buttons/SocialButton";
+import { socialLabel } from "@/lib/social";
 import { WhatsAppButton } from "@/components/shared/buttons/WhatsAppButton";
 import { fadeUp } from "@/lib/animations/variants";
 import type { Locale, Project, SectionCopy } from "@/types";
@@ -42,9 +43,19 @@ export function ProjectCtaSection({
           )}
 
           <Stack direction="row" gap={4} justify="center" className="mt-8 flex-wrap">
-            {instagram && <SocialButton platform="instagram" href={instagram.url} />}
+            {instagram && (
+              <SocialButton
+                platform="instagram"
+                href={instagram.url}
+                label={socialLabel("instagram", locale)}
+              />
+            )}
             {telegram && (
-              <SocialButton platform="telegram" href={telegram.url ?? `https://t.me/${telegram.username}`} />
+              <SocialButton
+                platform="telegram"
+                href={telegram.url ?? `https://t.me/${telegram.username}`}
+                label={socialLabel("telegram", locale)}
+              />
             )}
             {whatsapp && <WhatsAppButton channel={whatsapp} locale={locale} />}
           </Stack>

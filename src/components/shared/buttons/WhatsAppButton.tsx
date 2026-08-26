@@ -9,6 +9,7 @@
  */
 
 import { SocialButton } from "./SocialButton";
+import { socialLabel } from "@/lib/social";
 import { createWhatsappLink } from "@/lib/phone";
 import type { Locale, WhatsAppChannel } from "@/types";
 
@@ -19,5 +20,12 @@ export interface WhatsAppButtonProps {
 }
 
 export function WhatsAppButton({ channel, locale = "en", className }: WhatsAppButtonProps) {
-  return <SocialButton platform="whatsapp" href={createWhatsappLink(channel, locale)} className={className} />;
+  return (
+    <SocialButton
+      platform="whatsapp"
+      href={createWhatsappLink(channel, locale)}
+      label={socialLabel("whatsapp", locale)}
+      className={className}
+    />
+  );
 }

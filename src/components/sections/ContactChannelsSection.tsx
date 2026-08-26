@@ -6,6 +6,7 @@ import { StaggerItem } from "@/components/animations/StaggerItem";
 import { SectionHeading } from "@/components/shared/content/SectionHeading";
 import { Card, CardTitle } from "@/components/ui/card";
 import { SocialButton } from "@/components/shared/buttons/SocialButton";
+import { socialLabel } from "@/lib/social";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { createWhatsappLink } from "@/lib/phone";
@@ -73,14 +74,27 @@ export function ContactChannelsSection({
                         </Button>
                       )}
                       <div className="flex flex-wrap gap-3">
-                        {instagram && <SocialButton platform="instagram" href={instagram.url} />}
+                        {instagram && (
+                          <SocialButton
+                            platform="instagram"
+                            href={instagram.url}
+                            label={socialLabel("instagram", locale)}
+                          />
+                        )}
                         {telegram && (
                           <SocialButton
                             platform="telegram"
                             href={telegram.url ?? `https://t.me/${telegram.username}`}
+                            label={socialLabel("telegram", locale)}
                           />
                         )}
-                        {email && <SocialButton platform="email" href={`mailto:${email.address}`} />}
+                        {email && (
+                          <SocialButton
+                            platform="email"
+                            href={`mailto:${email.address}`}
+                            label={socialLabel("email", locale)}
+                          />
+                        )}
                       </div>
                     </div>
                   </Card>
