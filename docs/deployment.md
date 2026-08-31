@@ -57,14 +57,47 @@ Keep it for step 5. Do not commit it anywhere.
 ## 2. Image storage (Cloudflare R2)
 
 1. In the Cloudflare dashboard: **R2** → **Create bucket**. Name it e.g.
-   `meruert-media`.
-2. **Manage R2 API Tokens** → create a token with **Object Read & Write**,
-   scoped to that bucket.
-3. Note the Access Key ID, Secret Access Key, and your account's S3 endpoint
-   (`https://<account-id>.r2.cloudflarestorage.com`).
-4. Give the bucket a public URL: bucket → **Settings** → **Public access** →
-   either an `r2.dev` subdomain or a custom domain. Images must be publicly
-   readable — they are shown on a public website.
+   `meruert-media`. That name is `S3_BUCKET`.
+2. Open the bucket and copy its **S3 API** address — it contains your account
+   id and looks like `https://<account-id>.r2.cloudflarestorage.com`. That is
+   `S3_ENDPOINT`, copied whole, including `https://`.
+3. **Manage R2 API Tokens** → **Create API Token**, permission
+   **Object Read & Write**, scoped to that bucket. Read-only will break
+   uploads. You get an Access Key ID and a Secret Access Key.
+
+**The Secret Access Key is shown once.** Close the dialog without copying it
+and the token has to be recreated. Paste it into Vercel immediately.
+
+### What the five variables mean
+
+Think of it as a login to a folder on someone else's disk:
+
+| Variable | What it is | Example for R2 |
+| --- | --- | --- |
+| `S3_ENDPOINT` | the server address | `https://a1b2c3.r2.cloudflarestorage.com` |
+| `S3_BUCKET` | the folder name, chosen by you | `meruert-media` |
+| `S3_ACCESS_KEY_ID` | the login | a long alphanumeric string |
+| `S3_SECRET_ACCESS_KEY` | the password | a long alphanumeric string |
+| `S3_REGION` | where it physically lives | `auto` — R2 has no regions, but the S3 client requires the field |
+
+### Leave the bucket PRIVATE
+
+Do not enable public access, and do not set up an `r2.dev` subdomain — neither
+is needed, and both widen access for nothing.
+
+`src/cms/storage.ts` configures `s3Storage` without `disablePayloadAccessControl`,
+which means Payload registers its own static handler and serves every image
+through the site itself (`/api/media/file/<filename>`). The stored `url` is
+that route, not a bucket address — the plugin only writes a direct bucket URL
+when `disablePayloadAccessControl: true`. So the credentials above are the only
+thing that ever touches the bucket, and `next.config.ts` needs no
+`images.remotePatterns` because the images are same-origin.
+
+The trade-off: each image is proxied by a serverless function rather than
+served straight from a CDN. At this site's traffic that is fine, and it keeps
+the bucket closed. If the site ever grows enough for that to matter, the change
+is `disablePayloadAccessControl: true` plus a public bucket plus a
+`remotePatterns` entry — a deliberate step, not the default.
 
 R2 has no egress fees, which is why it suits an image-heavy site.
 
