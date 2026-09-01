@@ -111,6 +111,25 @@ export default buildConfig({
   secret: process.env.PAYLOAD_SECRET ?? "",
 
   db: postgresAdapter({
+    /**
+     * NEVER push schema implicitly. The adapter defaults to `push: true`
+     * whenever NODE_ENV is not "production", which means any script run
+     * against a database — including the seed and admin-creation scripts in
+     * ./scripts, which are normally run from a developer's machine — silently
+     * rewrites that database's schema, bypassing migrations entirely.
+     *
+     * Pointed at production, that corrupts the very thing migrations exist to
+     * control: the deployed build then runs `payload migrate` against a schema
+     * it did not create, and Payload stops the build with an interactive
+     * prompt ("It looks like you've run Payload in dev mode...") that nothing
+     * can answer in CI.
+     *
+     * This project manages schema exclusively through the committed migrations
+     * in src/migrations, so pushing is never the right behaviour in any
+     * environment. Changing the schema means `payload migrate:create` followed
+     * by `npm run cms:migrate` — see scripts/setup-local-db.md.
+     */
+    push: false,
     pool: {
       connectionString: process.env.DATABASE_URL ?? "",
     },
