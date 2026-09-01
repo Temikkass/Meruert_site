@@ -66,6 +66,24 @@ const PROJECT_SLUGS: Record<ProjectId, string> = {
   travel: "tours-and-courses",
 };
 
+/**
+ * Names shown for a project that has no record in the database yet. The site
+ * has two fixed project pages whether or not anyone has filled them in, so
+ * these keep the navigation and page titles readable on a fresh install.
+ */
+const PROJECT_FALLBACK_NAMES: Record<ProjectId, LocalizedText> = {
+  financial: {
+    ru: "Финансовая грамотность",
+    en: "Financial Literacy",
+    kk: "Қаржылық сауаттылық",
+  },
+  travel: {
+    ru: "Туры и курсы",
+    en: "Tours and Courses",
+    kk: "Турлар мен курстар",
+  },
+};
+
 /** Accent tints are contrast-tuned design tokens, not editable content. */
 const PROJECT_ACCENTS: Record<ProjectId, { primary: string; tint: string }> = {
   financial: {
@@ -258,6 +276,22 @@ export const getSiteSettings = cache(async (): Promise<SiteSettings> => {
 // Collections
 // ---------------------------------------------------------------------------
 
+/** A project that exists as a page but has no content yet. See getProjects. */
+function emptyProject(id: ProjectId): Project {
+  const blank: LocalizedText = { ru: "", en: "", kk: "" };
+  return {
+    id,
+    slug: PROJECT_SLUGS[id],
+    accent: PROJECT_ACCENTS[id],
+    name: PROJECT_FALLBACK_NAMES[id],
+    tagline: blank,
+    description: [],
+    heroImage: toRequiredImageAsset(null, defaultLocale),
+    offerings: [],
+    contacts: {},
+  };
+}
+
 export const getProjects = cache(async (): Promise<Record<ProjectId, Project>> => {
   const payload = await getPayloadClient();
   const result = await payload.find({
@@ -269,7 +303,26 @@ export const getProjects = cache(async (): Promise<Record<ProjectId, Project>> =
     sort: "order",
   });
 
-  const byId = {} as Record<ProjectId, Project>;
+  /**
+   * Start from a complete record rather than an empty object.
+   *
+   * The return type promises BOTH projects, and eleven call sites rely on that
+   * — `projects.financial.slug` in lib/seo.ts, the nav builder below, the
+   * layout, every project page. Building up from `{}` made that promise a lie
+   * the moment the database had no rows, and `{} as Record<...>` hid it from
+   * the compiler. On a freshly migrated production database that is exactly
+   * the state, so the very first deploy crashed during prerender with
+   * "Cannot read properties of undefined (reading 'slug')".
+   *
+   * A site backed by a CMS has to build on an empty database: the alternative
+   * is that no deployment works until someone manually seeds it, and the
+   * failure says nothing about why. Missing projects now render as empty
+   * pages that fill in the moment content is added.
+   */
+  const byId: Record<ProjectId, Project> = {
+    financial: emptyProject("financial"),
+    travel: emptyProject("travel"),
+  };
 
   for (const doc of result.docs) {
     const id = doc.projectId as ProjectId;
