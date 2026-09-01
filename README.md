@@ -125,7 +125,7 @@ Russian is the default; English and Kazakh are equal-status alternatives.
 
 - Pages live at `/{locale}/...`; `/about` redirects to `/ru/about`, or to the
   visitor's own language if `Accept-Language` names one we support
-  (`src/middleware.ts`).
+  (`src/proxy.ts`).
 - The navbar switcher preserves the current page when changing language.
 - `<html lang>`, `hreflang` alternates, `x-default`, Open Graph locale and the
   sitemap are all generated per locale.
@@ -157,7 +157,7 @@ The build reads content from the database, so the database must be reachable
 from the build environment and must already contain content — otherwise the
 pages build successfully but empty.
 
-`src/middleware.ts` runs on every page request, so a purely static export is
+`src/proxy.ts` runs on every page request, so a purely static export is
 not supported: the locale redirect needs a server.
 
 ### After changing the CMS schema

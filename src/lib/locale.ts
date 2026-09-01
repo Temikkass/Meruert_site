@@ -63,7 +63,7 @@ export const localeShortNames: Record<Locale, string> = {
 /**
  * Narrows the `params` a `[locale]` page receives. Anything that is not a
  * supported locale is a 404 rather than a silent fall back to the default —
- * middleware.ts already redirects unprefixed paths, so a bad locale here
+ * proxy.ts already redirects unprefixed paths, so a bad locale here
  * means someone typed `/de/about`, and quietly serving Russian at that URL
  * would let a nonexistent language get indexed.
  */

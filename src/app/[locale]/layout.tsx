@@ -19,7 +19,7 @@ import "../globals.css";
  * app/ because `<html lang>` has to reflect the active language, and a
  * layout above the dynamic segment cannot read it — every route on the site
  * is localized, so there is nothing left for an app/layout.tsx to wrap.
- * Requests without a locale prefix are redirected by middleware.ts, so this
+ * Requests without a locale prefix are redirected by proxy.ts, so this
  * layout always has one.
  *
  * Establishes, once, everything every page depends on:

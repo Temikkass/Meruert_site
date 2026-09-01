@@ -2,8 +2,15 @@ import { NextResponse, type NextRequest } from "next/server";
 import { defaultLocale, isLocale, locales } from "@/lib/locale";
 
 /**
- * middleware.ts
+ * proxy.ts
  * ----------------------------------------------------------------------------
+ * Renamed from middleware.ts for Next 16, which deprecated the `middleware`
+ * file convention in favour of `proxy`. Same execution model, same request
+ * lifecycle position, same `config.matcher` — only the filename and the
+ * exported function's name changed. Next requires the export to be named
+ * `proxy` (or be the default export); leaving it as `middleware` makes the
+ * file silently do nothing.
+ *
  * Every page lives under `/{locale}`, so a request for `/about` (or `/`)
  * matches no route. This redirects those to the same path under a locale,
  * which is what makes bare, un-prefixed URLs — the ones people type, and the
@@ -48,15 +55,15 @@ function preferredLocale(request: NextRequest) {
  * usual `(?!...|.*\..*)` idiom does not survive Next's path-to-regexp
  * compilation: the backslash is stripped, so `.*\..*` becomes `.*..*` — "any
  * two characters" — and the matcher then excludes every path of two or more
- * characters. The failure is silent, and its symptom is a middleware that
- * appears to run only for "/".
+ * characters. The failure is silent, and its symptom is a proxy that appears
+ * to run only for "/".
  */
 function isFileRequest(pathname: string): boolean {
   const lastSegment = pathname.split("/").pop() ?? "";
   return lastSegment.includes(".");
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (isFileRequest(pathname)) return NextResponse.next();

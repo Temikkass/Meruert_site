@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
  * app/[locale]/[...rest]/page.tsx
  * ----------------------------------------------------------------------------
  * Renders the site's own 404 for any URL under a locale that matches no real
- * page — /ru/nope, and (via middleware's redirect) /de/about too.
+ * page — /ru/nope, and (via the proxy's redirect) /de/about too.
  *
  * WHY THIS FILE HAS TO EXIST: a `not-found.tsx` inside a segment only handles
  * `notFound()` thrown from within that segment. A URL matching no route at all

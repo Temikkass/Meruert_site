@@ -22,7 +22,7 @@ import "./custom.scss";
  * real one over admin controls.
  *
  * It also sits OUTSIDE the [locale] segment, so /admin is not a localized
- * route and middleware.ts skips it — the admin's own language is configured
+ * route and proxy.ts skips it — the admin's own language is configured
  * in payload.config.ts#i18n, independently of the site's content locales.
  */
 
