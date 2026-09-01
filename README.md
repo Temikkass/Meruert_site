@@ -69,7 +69,6 @@ CI (`.github/workflows/ci.yml`) runs the whole sequence on every push.
 deploy. Saving updates the live site within seconds.
 
 The panel is in Russian, and organised the way the site is:
-
 | Section in the admin | What it controls |
 | --- | --- |
 | **Проекты** | The two projects — and **this is where new tours, courses and camps are added**, under a project's *Программы* tab |
