@@ -244,6 +244,7 @@ export interface Media {
    * Коротко опишите, что на фото. Это читают программы для незрячих и поисковые системы. Например: «Меруерт проводит урок финансовой грамотности».
    */
   alt: string;
+  prefix?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -786,6 +787,7 @@ export interface SocialLinksSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  prefix?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;

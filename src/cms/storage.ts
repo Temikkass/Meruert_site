@@ -50,22 +50,46 @@ export function readStorageConfig(): StorageConfig | null {
   return { bucket, region, accessKeyId, secretAccessKey, ...(endpoint ? { endpoint } : {}) };
 }
 
-/** The storage plugins for payload.config.ts — empty when running on disk. */
+/**
+ * The storage plugin for payload.config.ts.
+ *
+ * ALWAYS REGISTERED, toggled by `enabled` — never conditionally added.
+ *
+ * Returning an empty array when S3 was unconfigured looked tidier and broke
+ * the admin panel in production. The plugin contributes a client component
+ * (`@payloadcms/storage-s3/client#S3ClientUploadHandler`) to Payload's import
+ * map, and that map is generated ahead of time by `payload generate:importmap`.
+ * Generated on a machine with no S3 variables, the map came out without the
+ * handler; deployed where S3 *was* configured, the plugin asked for a
+ * component the map did not contain and the whole admin rendered blank:
+ *
+ *   getFromImportMap: PayloadComponent not found in importMap
+ *   key: '@payloadcms/storage-s3/client#S3ClientUploadHandler'
+ *
+ * That failure is server-side, so the browser showed no error at all — only
+ * an empty page. Keeping the plugin in the config unconditionally makes the
+ * import map identical in every environment, which is the only way a
+ * pre-generated map can be correct.
+ *
+ * `alwaysInsertFields` keeps the collection schema identical too, so a
+ * database migrated with storage off matches one migrated with it on.
+ */
 export function storagePlugins(): Plugin[] {
   const config = readStorageConfig();
-  if (!config) return [];
 
   return [
     s3Storage({
+      enabled: config !== null,
+      alwaysInsertFields: true,
       collections: { media: true },
-      bucket: config.bucket,
+      bucket: config?.bucket ?? "",
       config: {
-        region: config.region,
+        region: config?.region ?? "auto",
         credentials: {
-          accessKeyId: config.accessKeyId,
-          secretAccessKey: config.secretAccessKey,
+          accessKeyId: config?.accessKeyId ?? "",
+          secretAccessKey: config?.secretAccessKey ?? "",
         },
-        ...(config.endpoint ? { endpoint: config.endpoint, forcePathStyle: true } : {}),
+        ...(config?.endpoint ? { endpoint: config.endpoint, forcePathStyle: true } : {}),
       },
     }),
   ];
