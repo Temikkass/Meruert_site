@@ -1,5 +1,5 @@
 # Personal Brand Site
-
+ 
 A trilingual (Russian / English / Kazakh) personal brand site for a client in
 Kazakhstan, introducing the owner and two independent projects: **Financial
 Literacy**, and **Tours, Language Courses & Educational Camps**.
