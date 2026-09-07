@@ -111,6 +111,12 @@ export const imageReveal: Variants = {
  * tax; exit is quicker than enter (0.18s vs 0.32s) so the outgoing page
  * gets out of the way promptly.
  */
+/**
+ * `hidden` is deliberately unused by <PageTransition>, which mounts pages at
+ * `visible` and animates only `exit` — see that component for why an entrance
+ * here double-animated every hero. Kept so the entrance can be restored by
+ * changing one prop if the reveals are ever removed.
+ */
 export const pageTransition: Variants = {
   hidden: { opacity: 0, scale: 0.985, filter: "blur(4px)" },
   visible: {

@@ -75,7 +75,18 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
 
   return (
     <AnimatePresence mode="wait" initial={false}>
-      <motion.div key={pathname} initial="hidden" animate="visible" exit="exit" variants={pageTransition}>
+      {/*
+        EXIT ONLY — `initial="visible"`, not "hidden".
+        The incoming page used to fade, unblur and scale up from `hidden` over
+        0.32s while its own <Reveal>/<TextReveal> sections were independently
+        fading and rising the very same content. Two opacity animations on one
+        heading, and above the fold they always overlap, because a hero's
+        reveal fires the moment it mounts. Readers saw the words surface, then
+        surface again — reported as the page loading twice.
+        The content's own reveals ARE the entrance. The transition's job is
+        only to carry the outgoing page away.
+      */}
+      <motion.div key={pathname} initial="visible" animate="visible" exit="exit" variants={pageTransition}>
         <ScrollToTopOnMount />
         {children}
       </motion.div>
