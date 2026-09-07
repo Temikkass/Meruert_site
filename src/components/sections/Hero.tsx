@@ -70,21 +70,22 @@ export function Hero({
 
           {/* Copy */}
           <div className="order-2 flex flex-col items-center gap-6 text-center lg:order-1 lg:items-start lg:text-left">
-            <Reveal variants={fadeUp}>
+            <Reveal variants={fadeUp} immediate>
               <Eyebrow>{content.eyebrow[locale]}</Eyebrow>
             </Reveal>
 
             <TextReveal
               text={content.headline[locale]}
               as="h1"
+              immediate
               className="text-display-xl font-display font-semibold leading-display tracking-display text-ink"
             />
 
-            <Reveal variants={fadeUp} delay={0.15}>
+            <Reveal variants={fadeUp} delay={0.15} immediate>
               <p className="text-body-lg text-ink-muted leading-body text-measure">{content.intro[locale]}</p>
             </Reveal>
 
-            <Reveal variants={fadeUp} delay={0.3}>
+            <Reveal variants={fadeUp} delay={0.3} immediate>
               <div className="flex flex-wrap items-center justify-center gap-4 lg:justify-start">
                 <HeroCtaButtons primaryCta={content.primaryCta} secondaryCta={content.secondaryCta} locale={locale} />
               </div>

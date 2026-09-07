@@ -45,6 +45,15 @@ export interface TextRevealProps {
   wordClassName?: string;
   staggerDelay?: number;
   once?: boolean;
+  /**
+   * Render the heading immediately, with no per-word entrance. For headings
+   * above the fold — see Reveal's `immediate` for why: the mask animation
+   * fires the moment the page mounts, so on every client-side navigation the
+   * page appeared and then the heading animated in after it, which reads as
+   * the page loading twice. It also keeps the largest text on the page from
+   * waiting on JavaScript.
+   */
+  immediate?: boolean;
 }
 
 export function TextReveal({
@@ -54,9 +63,17 @@ export function TextReveal({
   wordClassName,
   staggerDelay = 0.06,
   once = true,
+  immediate = false,
 }: TextRevealProps) {
   const Tag = as;
   const words = text.split(" ");
+
+  // Plain text, no spans and no motion — the accessible name and copy-paste
+  // behaviour are identical either way, since the animated version already
+  // renders real words separated by real spaces.
+  if (immediate) {
+    return <Tag className={className}>{text}</Tag>;
+  }
 
   return (
     <Tag className={className}>

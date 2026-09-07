@@ -48,21 +48,22 @@ export function ProjectHero({
       <Container className="relative z-10">
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[1fr_1fr] lg:gap-16">
           <div className="order-2 flex flex-col gap-6 lg:order-1">
-            <Reveal variants={fadeUp}>
+            <Reveal variants={fadeUp} immediate>
               <Eyebrow>{content.eyebrow?.[locale]}</Eyebrow>
             </Reveal>
 
             <TextReveal
               text={content.heading[locale]}
               as="h1"
+              immediate
               className="text-display-lg font-display font-semibold leading-display tracking-display text-ink"
             />
 
-            <Reveal variants={fadeUp} delay={0.15}>
+            <Reveal variants={fadeUp} delay={0.15} immediate>
               <p className="text-body-lg leading-body text-ink-muted text-measure">{content.intro[locale]}</p>
             </Reveal>
 
-            <Reveal variants={fadeUp} delay={0.3}>
+            <Reveal variants={fadeUp} delay={0.3} immediate>
               <div className="flex flex-wrap items-center gap-3">
                 {instagram && (
                   <SocialButton

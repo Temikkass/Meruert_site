@@ -20,7 +20,7 @@ export function PageHeader({ content, locale = "en" }: { content: SectionCopy; l
   return (
     <section className="border-b border-border pb-12 pt-[calc(env(safe-area-inset-top)+7rem)] sm:pb-16 sm:pt-[calc(env(safe-area-inset-top)+8rem)]">
       <Container>
-        <Reveal variants={fadeUp}>
+        <Reveal variants={fadeUp} immediate>
           {content.eyebrow && <Eyebrow>{content.eyebrow[locale]}</Eyebrow>}
           <h1 className="mt-3 text-display-lg font-display font-semibold leading-display tracking-display text-ink">
             {content.heading[locale]}
