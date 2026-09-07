@@ -29,11 +29,33 @@ import type { NextConfig } from "next";
  *    individually rather than the package's shared module graph pulling in
  *    more than what `components/ui/icon.tsx`'s iconMap actually imports.
  */
+/**
+ * Parsed once here so an unparseable S3_PUBLIC_URL fails the build loudly,
+ * rather than silently producing a config that blocks every image.
+ */
+const publicMediaHost = (() => {
+  const raw = process.env.S3_PUBLIC_URL?.trim();
+  if (!raw) return null;
+  const url = new URL(raw);
+  return { protocol: url.protocol.replace(":", "") as "http" | "https", hostname: url.hostname };
+})();
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   typedRoutes: true,
   images: {
     formats: ["image/avif", "image/webp"],
+    /**
+     * next/image refuses any host it was not told about, so serving media
+     * straight from the bucket needs its hostname listed here. Derived from
+     * S3_PUBLIC_URL rather than hardcoded, so switching bucket or domain is an
+     * environment change and leaving the variable unset keeps the list empty —
+     * which is correct, because without it every image is same-origin through
+     * /api/media/file and no remote host is involved at all.
+     */
+    remotePatterns: publicMediaHost
+      ? [{ protocol: publicMediaHost.protocol, hostname: publicMediaHost.hostname }]
+      : [],
   },
   experimental: {
     optimizePackageImports: ["lucide-react"],

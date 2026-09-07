@@ -37,6 +37,20 @@ export interface StorageConfig {
   endpoint?: string;
 }
 
+/**
+ * Public base URL the bucket is reachable at, if the bucket is served
+ * directly — an r2.dev subdomain or a custom domain, without a trailing slash.
+ *
+ * Setting it switches image delivery from "proxied by this site" to "served by
+ * the CDN". Unsetting it switches back, with no code change: that is
+ * deliberate, so the decision can be reversed from the hosting dashboard
+ * alone. See `mediaCollectionOptions` for the measurements behind it.
+ */
+export function readPublicStorageUrl(): string | null {
+  const url = process.env.S3_PUBLIC_URL?.trim().replace(/\/+$/, "");
+  return url && url.length > 0 ? url : null;
+}
+
 /** Reads the S3 settings, or null when they are not all present. */
 export function readStorageConfig(): StorageConfig | null {
   const bucket = process.env.S3_BUCKET?.trim();
@@ -74,6 +88,41 @@ export function readStorageConfig(): StorageConfig | null {
  * `alwaysInsertFields` keeps the collection schema identical too, so a
  * database migrated with storage off matches one migrated with it on.
  */
+/**
+ * How the media collection's files are addressed.
+ *
+ * DEFAULT (no S3_PUBLIC_URL): Payload serves every image through this site's
+ * own route, /api/media/file/<name>. The bucket stays private and the
+ * credentials are the only thing that touches it — but each image becomes a
+ * serverless function invocation that downloads from the bucket and forwards
+ * it.
+ *
+ * Measured on the deployed site, that cost is visible rather than theoretical:
+ * the HTML arrived in 0.63s while the hero photo took 1.24s, and 2.4s on a
+ * cold start. The top of the page filled in a second time, a beat after the
+ * text — readers reported it as the page loading twice.
+ *
+ * WITH S3_PUBLIC_URL set, `disablePayloadAccessControl` makes Payload write
+ * the bucket's own public URL into each media record, so browsers fetch
+ * straight from Cloudflare's edge and never wake a function. The trade-off is
+ * that the bucket must be publicly readable — acceptable for photographs that
+ * are already on a public website, and a real widening of access that should
+ * be a decision rather than a default.
+ *
+ * Reverting is removing the variable: URLs go back to the proxied route on the
+ * next deploy, and the bucket can be closed again.
+ */
+function mediaCollectionOptions() {
+  const publicUrl = readPublicStorageUrl();
+  if (!publicUrl) return true as const;
+
+  return {
+    disablePayloadAccessControl: true as const,
+    generateFileURL: ({ filename, prefix }: { filename: string; prefix?: string }) =>
+      [publicUrl, prefix, filename].filter(Boolean).join("/"),
+  };
+}
+
 export function storagePlugins(): Plugin[] {
   const config = readStorageConfig();
 
@@ -81,7 +130,7 @@ export function storagePlugins(): Plugin[] {
     s3Storage({
       enabled: config !== null,
       alwaysInsertFields: true,
-      collections: { media: true },
+      collections: { media: mediaCollectionOptions() },
       bucket: config?.bucket ?? "",
       config: {
         region: config?.region ?? "auto",

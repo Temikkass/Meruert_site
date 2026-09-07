@@ -87,6 +87,14 @@ function check(): Check[] {
       blocking: true,
     },
     {
+      name: "Image delivery",
+      ok: true,
+      detail: process.env.S3_PUBLIC_URL?.trim()
+        ? `direct from ${process.env.S3_PUBLIC_URL.trim()} — served by the CDN`
+        : "proxied through /api/media/file — every image wakes a serverless function. Set S3_PUBLIC_URL to serve from the bucket's CDN instead.",
+      blocking: false,
+    },
+    {
       name: "Email",
       ok: Boolean(emailKey && emailFrom),
       detail:

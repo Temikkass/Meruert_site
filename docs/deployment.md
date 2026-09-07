@@ -80,24 +80,41 @@ Think of it as a login to a folder on someone else's disk:
 | `S3_SECRET_ACCESS_KEY` | the password | a long alphanumeric string |
 | `S3_REGION` | where it physically lives | `auto` — R2 has no regions, but the S3 client requires the field |
 
-### Leave the bucket PRIVATE
+### Two ways to serve the images — pick one
 
-Do not enable public access, and do not set up an `r2.dev` subdomain — neither
-is needed, and both widen access for nothing.
-
-`src/cms/storage.ts` configures `s3Storage` without `disablePayloadAccessControl`,
-which means Payload registers its own static handler and serves every image
-through the site itself (`/api/media/file/<filename>`). The stored `url` is
-that route, not a bucket address — the plugin only writes a direct bucket URL
-when `disablePayloadAccessControl: true`. So the credentials above are the only
+**Proxied through the site (default).** Leave `S3_PUBLIC_URL` unset and the
+bucket private. `src/cms/storage.ts` configures `s3Storage` without
+`disablePayloadAccessControl`, so Payload registers its own handler and every
+image is fetched through `/api/media/file/<name>`. The credentials are the only
 thing that ever touches the bucket, and `next.config.ts` needs no
-`images.remotePatterns` because the images are same-origin.
+`remotePatterns` because the images are same-origin.
 
-The trade-off: each image is proxied by a serverless function rather than
-served straight from a CDN. At this site's traffic that is fine, and it keeps
-the bucket closed. If the site ever grows enough for that to matter, the change
-is `disablePayloadAccessControl: true` plus a public bucket plus a
-`remotePatterns` entry — a deliberate step, not the default.
+The cost is real and was measured on the deployed site, not estimated: the HTML
+arrived in **0.63s** while the hero photo took **1.24s**, and 2.4s on a cold
+start. Each image is a serverless function that downloads from the bucket and
+forwards it. Visitors saw the top of the page fill in a second time, a beat
+after the text, and read it as the page loading twice.
+
+**Served straight from the CDN (recommended for a photo-led site).** Give the
+bucket a public URL — R2 bucket → **Settings** → **Public access** → an
+`r2.dev` subdomain or a custom domain — and set:
+
+```
+S3_PUBLIC_URL=https://pub-xxxx.r2.dev
+```
+
+Payload then writes the bucket's own URL into each media record, browsers fetch
+from Cloudflare's edge, and no function is involved. `next.config.ts` derives
+`images.remotePatterns` from the same variable, so nothing else needs changing.
+
+The trade-off is that **the bucket becomes publicly readable**. For photographs
+already displayed on a public website that is reasonable; it is still a real
+widening of access, which is why it is a variable you set rather than the
+default.
+
+**Reverting is removing the variable** and redeploying — URLs go back to the
+proxied route with no code change, and the bucket can be closed again. Run
+`npm run launch:check` to see which mode is active.
 
 R2 has no egress fees, which is why it suits an image-heavy site.
 
@@ -135,6 +152,7 @@ Do not point it anywhere yet — Vercel gives you the DNS records in step 6.
 | `S3_ACCESS_KEY_ID` | from step 2 |
 | `S3_SECRET_ACCESS_KEY` | from step 2 |
 | `S3_ENDPOINT` | from step 2 |
+| `S3_PUBLIC_URL` | optional — see step 2; serves images from the CDN instead of through the site |
 | `RESEND_API_KEY` | from step 3 |
 | `EMAIL_FROM_ADDRESS` | e.g. `noreply@your-domain` |
 | `EMAIL_FROM_NAME` | e.g. `Meruert` |
