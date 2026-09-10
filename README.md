@@ -38,15 +38,15 @@ Then open:
 - **http://localhost:3000/admin** — the admin panel
 
 > The first `npm run dev` or `npm run build` needs internet access:
-> `next/font/google` downloads and self-hosts Inter, Manrope and Plus Jakarta
-> Sans at build time. There are no runtime requests to Google Fonts.
+> `next/font/google` downloads and self-hosts Inter, Manrope, Plus Jakarta
+> Sans and Onest at build time. There are no runtime requests to Google Fonts.
 
 ### Scripts
 
 | Script | What it does |
 | --- | --- |
 | `npm run dev` | Dev server (Turbopack) |
-| `npm run build` / `npm start` | Production build / serve |
+| `npm run build` / `npm start` | Production build / serve — webpack, matching `vercel-build` |
 | `npm run verify` | typecheck + lint + test + build — run before shipping |
 | `npm run test` | Vitest unit tests |
 | `npm run db:start` / `db:stop` / `db:status` | Local development database |
@@ -302,17 +302,27 @@ code (Framer Motion transitions, per-project accent lookups) reads;
 `globals.css` is what Tailwind reads to generate utility classes. Keep them
 in sync by hand — both files say so in their header comments.
 
-## Typography: three faces, each with one job
+## Typography: three roles, four faces
 
-- **Plus Jakarta Sans** (`--font-display`) — headlines. Enough character to
-  feel handcrafted at large sizes without turning into a display serif that
-  would fight the brief's "modern, minimalistic" direction.
+- **Plus Jakarta Sans + Onest** (`--font-display`) — headlines. Jakarta has
+  enough character to feel handcrafted at large sizes without turning into a
+  display serif that would fight the brief's "modern, minimalistic"
+  direction — but it ships no Cyrillic, so Russian and Kazakh headings would
+  render in Arial. Onest sits behind it in the stack and takes every Cyrillic
+  glyph: same species of geometric humanist sans, drawn with Cyrillic as a
+  first-class script. Browsers pick per glyph, so a locale switch changes the
+  face without changing the layout.
 - **Inter** (`--font-body`) — paragraphs. Chosen because it disappears;
   body copy's job is to be read, not to have a personality.
 - **Manrope** (`--font-data`) — statistics, captions, nav labels. Its
   numerals read cleanly as data at small sizes.
 
-All three are self-hosted via `next/font/google` (see `lib/fonts.ts`) —
+The split is not free-form: whichever family serves Cyrillic must serve *all*
+of it. Letting both halves claim a Cyrillic range put Қ in one typeface and
+the а beside it in another, inside the same Kazakh word. `lib/fonts.ts`
+carries the measurements, and `tests/font-subsets.test.ts` holds the line.
+
+All four are self-hosted via `next/font/google` (see `lib/fonts.ts`) —
 zero runtime request to Google Fonts, zero layout shift from a
 late-loading `@font-face`. Latin + Cyrillic subsets are both loaded,
 since `types/common.ts#Locale` includes Russian and Kazakh content.

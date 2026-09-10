@@ -31,9 +31,19 @@
 
 @theme {
   /* ---- Typography --------------------------------------------------- */
-  --font-display: var(--font-display), "Plus Jakarta Sans", ui-sans-serif, sans-serif;
-  --font-body: var(--font-body), "Inter", ui-sans-serif, sans-serif;
-  --font-data: var(--font-data), "Manrope", ui-sans-serif, sans-serif;
+  /* Composed from the per-family variables next/font sets on <html>. The names
+     differ from these token names on purpose: when they matched, next/font's
+     declaration and this one landed on the same element at the same
+     specificity, and whichever came last silently replaced the other — which
+     meant the fallback tails below never applied at all.
+
+     Display is two families deep because Plus Jakarta Sans has no Cyrillic:
+     browsers fall back per glyph, so Latin renders in Jakarta and Russian and
+     Kazakh render in Onest. Order matters; see lib/fonts.ts. */
+  --font-display: var(--font-display-latin), var(--font-display-cyrillic), ui-sans-serif,
+    sans-serif;
+  --font-body: var(--font-body-face), ui-sans-serif, sans-serif;
+  --font-data: var(--font-data-face), ui-sans-serif, sans-serif;
 
   /* Fluid type scale via clamp() — min/preferred/max, tuned so headline
      sizes scale continuously across 360px -> 1920px instead of jumping at

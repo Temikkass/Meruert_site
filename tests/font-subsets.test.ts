@@ -39,12 +39,25 @@ function subsetsFor(exportName: string): string[] {
   return [...(match?.[1] ?? "").matchAll(/"([^"]+)"/g)].map((m) => m[1] as string);
 }
 
+/** Pulls the `weight: [...]` array out of the same block. */
+function weightsFor(exportName: string): string[] {
+  const start = source.indexOf(`export const ${exportName} = `);
+  expect(start, `fonts.ts should export ${exportName}`).toBeGreaterThan(-1);
+
+  const block = source.slice(start, source.indexOf("});", start));
+  const match = block.match(/weight:\s*\[([^\]]+)\]/);
+  expect(match, `${exportName} should declare a weight array`).not.toBeNull();
+
+  return [...(match?.[1] ?? "").matchAll(/"([^"]+)"/g)].map((m) => m[1] as string);
+}
+
 describe("font subsets cover every language the site ships", () => {
-  // Both families offer both Cyrillic ranges, so both must be requested:
+  // These families offer both Cyrillic ranges, so both must be requested:
   // Russian is the primary locale and Kazakh is one of the three.
   it.each([
     ["fontBody", "Inter"],
     ["fontData", "Manrope"],
+    ["fontDisplayCyrillic", "Onest"],
   ])("%s (%s) requests latin, cyrillic and cyrillic-ext", (exportName) => {
     expect(subsetsFor(exportName)).toEqual(
       expect.arrayContaining(["latin", "cyrillic", "cyrillic-ext"])
@@ -52,12 +65,39 @@ describe("font subsets cover every language the site ships", () => {
   });
 
   /**
-   * Plus Jakarta Sans publishes no `cyrillic` subset at all — asking for one is
-   * a build error, not a silent miss. `cyrillic-ext` is the most Cyrillic this
-   * family has, which is why headings in Russian fall back; the note at the
-   * bottom of fonts.ts records that gap and what fixing it would take.
+   * The Latin half of the display stack must claim NO Cyrillic range at all.
+   * Plus Jakarta Sans has no basic `cyrillic` subset, but it does have
+   * `cyrillic-ext` — and taking it splits Kazakh words between two typefaces,
+   * because Қ resolves to Jakarta while the а beside it resolves to Onest.
+   * Whichever family serves Cyrillic must serve all of it.
    */
-  it("fontDisplay (Plus Jakarta Sans) requests every subset it has", () => {
-    expect(subsetsFor("fontDisplay")).toEqual(expect.arrayContaining(["latin", "cyrillic-ext"]));
+  it("fontDisplayLatin (Plus Jakarta Sans) claims no Cyrillic range", () => {
+    const subsets = subsetsFor("fontDisplayLatin");
+    expect(subsets).toContain("latin");
+    expect(subsets.filter((s) => s.startsWith("cyrillic"))).toEqual([]);
+  });
+
+  /**
+   * The two halves of the display stack must agree on weights, or a heading
+   * changes thickness when it changes language — the kind of drift nobody
+   * notices in review because reviewers read one locale.
+   */
+  it("both display faces offer the same weights", () => {
+    expect(weightsFor("fontDisplayCyrillic")).toEqual(weightsFor("fontDisplayLatin"));
+  });
+
+  /**
+   * next/font would otherwise append a metric-adjusted Arial face to the Latin
+   * display family, and Arial HAS Cyrillic — so it would swallow every Russian
+   * glyph before the browser ever reached Onest. Measured on the running page
+   * before the fix: Cyrillic rendered at the fallback's width, not the display
+   * face's.
+   */
+  it("the Latin display face does not carry a fallback that would eat Cyrillic", () => {
+    const block = source.slice(
+      source.indexOf("export const fontDisplayLatin"),
+      source.indexOf("export const fontDisplayCyrillic")
+    );
+    expect(block).toContain("adjustFontFallback: false");
   });
 });
