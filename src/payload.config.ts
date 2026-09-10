@@ -3,7 +3,6 @@ import { fileURLToPath } from "node:url";
 
 import { postgresAdapter } from "@payloadcms/db-postgres";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
-import { en } from "@payloadcms/translations/languages/en";
 import { ru } from "@payloadcms/translations/languages/ru";
 import { buildConfig } from "payload";
 import sharp from "sharp";
@@ -97,13 +96,51 @@ export default buildConfig({
   /**
    * The admin UI's own chrome — buttons, menus, validation messages — in
    * Russian. This is separate from `localization` above, which is about the
-   * CONTENT being edited. The client works in Russian, so the interface
-   * around the content should be too; English stays available so a developer
-   * can switch back from the account menu.
+   * CONTENT being edited.
+   *
+   * RUSSIAN ONLY, and that is the whole point. Payload resolves the admin
+   * language as: the `payload-lng` cookie, then the browser's Accept-Language
+   * header, then `fallbackLanguage` — and it only ever accepts a value that
+   * appears in `supportedLanguages` (see payload/dist/utilities/
+   * getRequestLanguage.js). Listing English here therefore did not make English
+   * *available*, it made English *win* for anyone whose browser asks for it:
+   * the owner opening the panel from an English-locale phone or a fresh Windows
+   * install got an English interface wrapped around Russian field labels, and
+   * `fallbackLanguage: "ru"` never came into play because en was supported.
+   *
+   * With `ru` alone, every browser resolves to Russian regardless of its
+   * locale. A developer who wants the English chrome adds `en` back to this
+   * object and switches from the account menu — one line, and the reason it is
+   * not the default is written here.
    */
   i18n: {
-    supportedLanguages: { ru, en },
+    supportedLanguages: { ru },
     fallbackLanguage: "ru",
+
+    /**
+     * Three of Payload's stock Russian strings interpolate a field label
+     * straight into a sentence that needs a grammatical case Russian labels do
+     * not have in the nominative. The client reads the results of that every
+     * day:
+     *
+     *   "Добавить {{label}}"              -> "Добавить Программа"
+     *   "Загрузить новый {{label}}"       -> "Загрузить новый Изображение"
+     *   "Выберите существующий {{label}}" -> "Выберите существующий Изображение"
+     *
+     * The fix is not to bend the labels — they are correct where they appear as
+     * headings — but to reword the three sentences so no case agreement is
+     * needed. A colon turns the label into an apposition, and the two upload
+     * buttons say what they do without naming the collection at all.
+     */
+    translations: {
+      ru: {
+        fields: {
+          addLabel: "Добавить: {{label}}",
+          uploadNewLabel: "Загрузить новый файл",
+          selectExistingLabel: "Выбрать из загруженных",
+        },
+      },
+    },
   },
 
   editor: lexicalEditor(),
