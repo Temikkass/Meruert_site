@@ -1,0 +1,489 @@
+<title>Как наполнять сайт</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&family=Inter:wght@400;500;600&family=Manrope:wght@600;700&display=swap">
+
+<style>
+  :root {
+    --canvas: oklch(98.5% 0.004 293);
+    --surface: oklch(100% 0 0);
+    --inset: oklch(96.5% 0.006 293);
+    --ink: oklch(18% 0.02 293);
+    --ink-muted: oklch(46% 0.02 293);
+    --ink-faint: oklch(60% 0.015 293);
+    --border: oklch(90% 0.01 293);
+    --border-soft: oklch(94% 0.008 293);
+    --accent: oklch(52% 0.16 292);
+    --accent-tint: oklch(93% 0.035 292);
+    --warn: oklch(52% 0.15 60);
+    --warn-tint: oklch(94% 0.05 70);
+    --danger: oklch(52% 0.17 25);
+    --danger-tint: oklch(94% 0.045 25);
+
+    --font-display: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+    --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --font-data: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --canvas: oklch(15% 0.015 293);
+      --surface: oklch(19% 0.018 293);
+      --inset: oklch(22% 0.018 293);
+      --ink: oklch(96% 0.004 293);
+      --ink-muted: oklch(72% 0.015 293);
+      --ink-faint: oklch(60% 0.015 293);
+      --border: oklch(28% 0.02 293);
+      --border-soft: oklch(24% 0.018 293);
+      --accent: oklch(74% 0.13 292);
+      --accent-tint: oklch(30% 0.06 292);
+      --warn: oklch(80% 0.13 70);
+      --warn-tint: oklch(29% 0.05 70);
+      --danger: oklch(75% 0.15 25);
+      --danger-tint: oklch(29% 0.055 25);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --canvas: oklch(15% 0.015 293);
+    --surface: oklch(19% 0.018 293);
+    --inset: oklch(22% 0.018 293);
+    --ink: oklch(96% 0.004 293);
+    --ink-muted: oklch(72% 0.015 293);
+    --ink-faint: oklch(60% 0.015 293);
+    --border: oklch(28% 0.02 293);
+    --border-soft: oklch(24% 0.018 293);
+    --accent: oklch(74% 0.13 292);
+    --accent-tint: oklch(30% 0.06 292);
+    --warn: oklch(80% 0.13 70);
+    --warn-tint: oklch(29% 0.05 70);
+    --danger: oklch(75% 0.15 25);
+    --danger-tint: oklch(29% 0.055 25);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--canvas);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 46rem;
+    margin: 0 auto;
+    padding: clamp(2rem, 6vw, 4rem) clamp(1.1rem, 5vw, 2rem) 5rem;
+  }
+
+  .eyebrow {
+    font-family: var(--font-data);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 6vw, 2.8rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin: 0.9rem 0 0;
+    text-wrap: balance;
+  }
+
+  .standfirst { font-size: 1.06rem; color: var(--ink-muted); margin: 1rem 0 0; max-width: 36rem; }
+
+  h2 {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 3rem 0 0.4rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--border);
+    text-wrap: balance;
+  }
+
+  h3 {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin: 2rem 0 0.5rem;
+  }
+
+  p { margin: 0.7rem 0; }
+  .lead { color: var(--ink-muted); margin-top: 0.6rem; }
+
+  ol, ul { margin: 0.7rem 0; padding-left: 1.3rem; }
+  li { margin-bottom: 0.45rem; }
+
+  code, .path {
+    font-family: var(--font-data);
+    font-size: 0.9em;
+    background: var(--inset);
+    border: 1px solid var(--border-soft);
+    border-radius: 0.35rem;
+    padding: 0.08em 0.4em;
+    white-space: nowrap;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 1.2rem 1.4rem;
+    margin: 1.2rem 0;
+  }
+
+  .note {
+    border-radius: 0.9rem;
+    padding: 1rem 1.2rem;
+    margin: 1.2rem 0;
+    background: var(--accent-tint);
+  }
+  .note--warn { background: var(--warn-tint); }
+  .note--danger { background: var(--danger-tint); }
+  .note p { margin: 0.35rem 0; font-size: 0.96rem; }
+  .note strong { font-weight: 600; }
+  .note-title {
+    font-family: var(--font-data);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.35rem;
+    display: block;
+  }
+  .note .note-title { color: var(--accent); }
+  .note--warn .note-title { color: var(--warn); }
+  .note--danger .note-title { color: var(--danger); }
+
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.95rem; }
+  th, td { text-align: left; padding: 0.6rem 0.7rem; border-bottom: 1px solid var(--border-soft); vertical-align: top; }
+  th { font-family: var(--font-data); font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--ink-faint); font-weight: 700; }
+  td:first-child { font-weight: 600; white-space: nowrap; }
+  .table-wrap { overflow-x: auto; }
+
+  .steps { counter-reset: step; list-style: none; padding-left: 0; }
+  /* Номер позиционируется абсолютно, а не как ячейка сетки: иначе каждый
+     <strong> внутри пункта становится отдельным элементом сетки и текст
+     рассыпается по колонкам. */
+  .steps > li {
+    counter-increment: step;
+    position: relative;
+    padding-left: 2.5rem;
+    min-height: 1.7rem;
+    margin-bottom: 0.9rem;
+  }
+  .steps > li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 0.1rem;
+    font-family: var(--font-data);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--accent);
+    background: var(--accent-tint);
+    border-radius: 999px;
+    width: 1.7rem; height: 1.7rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .toc { background: var(--inset); border-radius: 1rem; padding: 1.1rem 1.4rem; margin-top: 1.8rem; }
+  .toc ol { margin: 0.4rem 0 0; padding-left: 1.2rem; }
+  .toc a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--border); }
+  .toc a:hover { border-bottom-color: var(--accent); color: var(--accent); }
+
+  a { color: var(--accent); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+
+  footer { margin-top: 3.5rem; padding-top: 1.2rem; border-top: 1px solid var(--border-soft); font-size: 0.88rem; color: var(--ink-faint); }
+</style>
+
+<div class="page">
+
+  <header>
+    <div class="eyebrow">Инструкция для владелицы сайта</div>
+    <h1>Как наполнять сайт</h1>
+    <p class="standfirst">
+      Весь текст и все фотографии на сайте вы меняете сами, через панель управления.
+      Программист для этого не нужен. Ничего сломать нельзя — оформление и структура
+      страниц закрыты от редактирования.
+    </p>
+  </header>
+
+  <div class="toc">
+    <strong>В этой инструкции</strong>
+    <ol>
+      <li><a href="#login">Вход в панель</a></li>
+      <li><a href="#map">Что где лежит</a></li>
+      <li><a href="#langs">Три языка</a></li>
+      <li><a href="#tasks">Частые задачи по шагам</a></li>
+      <li><a href="#photos">Правила для фотографий</a></li>
+      <li><a href="#privacy">Политика конфиденциальности</a></li>
+      <li><a href="#limits">Что изменить нельзя</a></li>
+    </ol>
+  </div>
+
+  <!-- 1 -->
+  <h2 id="login">1. Вход в панель</h2>
+
+  <p>Адрес панели — это адрес сайта с добавлением <span class="path">/admin</span> в конце.</p>
+
+  <p>Введите почту и пароль, которые вам выдали. Панель запомнит вас, каждый раз входить не придётся.</p>
+
+  <div class="note">
+    <span class="note-title">Если забыли пароль</span>
+    <p>На странице входа есть ссылка «Забыли пароль?» — она пришлёт письмо для восстановления.</p>
+  </div>
+
+  <!-- 2 -->
+  <h2 id="map">2. Что где лежит</h2>
+
+  <p class="lead">Слева в панели — список разделов, сгруппированных по смыслу. Вот что в каждом.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Раздел</th><th>Что там</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Проекты</td><td>Два ваших направления. <strong>Здесь же добавляются туры, курсы и лагеря</strong>, а также контакты для каждого направления</td></tr>
+        <tr><td>Контент</td><td>Галерея, отзывы, частые вопросы, цифры, карточки «Почему я»</td></tr>
+        <tr><td>Обо мне</td><td>Ваше имя, биография, портрет, история по годам, сертификаты</td></tr>
+        <tr><td>Контакты</td><td>Ссылки на соцсети, которые видны в подвале сайта</td></tr>
+        <tr><td>Страницы</td><td>Заголовки и подписи разделов на каждой странице. И политика конфиденциальности</td></tr>
+        <tr><td>Медиа</td><td>Все загруженные фотографии в одном месте</td></tr>
+        <tr><td>Система</td><td>Название сайта в поиске, подвал, пользователи панели</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note">
+    <span class="note-title">Как сохранять</span>
+    <p>Кнопка <strong>«Сохранить»</strong> справа вверху. Изменения появляются на сайте <strong>в течение нескольких секунд</strong> — обновите страницу сайта и увидите.</p>
+    <p>Отдельной кнопки «опубликовать» нет: сохранили — значит опубликовали.</p>
+  </div>
+
+  <!-- 3 -->
+  <h2 id="langs">3. Три языка</h2>
+
+  <p>
+    Сайт работает на русском, английском и казахском. У каждого текстового поля есть
+    переключатель языка — обычно вверху страницы редактирования.
+  </p>
+
+  <p>
+    Заполняете поле на русском, переключаете язык, вводите перевод. <strong>Переводы пишутся вручную</strong> —
+    автоматического перевода в панели нет.
+  </p>
+
+  <div class="note">
+    <span class="note-title">Можно заполнить не всё</span>
+    <p>
+      Если английский или казахский оставить пустым, посетитель увидит там <strong>русский текст</strong>.
+      Сайт не сломается и пустых мест не будет.
+    </p>
+    <p>
+      Поэтому спокойно начинайте с русского, а переводы добавляйте потом — по одному, когда будет время.
+    </p>
+  </div>
+
+  <!-- 4 -->
+  <h2 id="tasks">4. Частые задачи по шагам</h2>
+
+  <h3>Добавить тур, курс или лагерь</h3>
+  <ol class="steps">
+    <li><strong>Проекты</strong> → выберите «Туры и курсы» (или «Финансовая грамотность»)</li>
+    <li>Вкладка <strong>«Услуги и программы»</strong></li>
+    <li>Внизу списка — кнопка <strong>«Добавить Программа»</strong> — панель подписывает её именно так</li>
+    <li>Заполните название, описание, выберите иконку и добавьте фото</li>
+    <li><strong>Сохранить</strong></li>
+  </ol>
+  <p class="lead">
+    Программы можно перетаскивать мышкой, меняя порядок на сайте. Чтобы убрать программу —
+    нажмите <strong>«…»</strong> справа от её строки и выберите <strong>«Удалить»</strong>.
+  </p>
+
+  <h3>Заменить фотографию</h3>
+  <ol class="steps">
+    <li>Откройте запись, где стоит фото (проект, отзыв, сертификат)</li>
+    <li>Нажмите на поле с изображением</li>
+    <li>Загрузите новый файл или выберите уже загруженный из списка</li>
+    <li>Заполните <strong>описание изображения</strong> — это обязательно, см. раздел 5</li>
+    <li><strong>Сохранить</strong></li>
+  </ol>
+
+  <h3>Изменить текст на странице</h3>
+  <ol class="steps">
+    <li><strong>Страницы</strong> → нужная страница</li>
+    <li>Найдите блок по названию — они идут в том же порядке, что и на сайте</li>
+    <li>Измените текст, при желании переключите язык и впишите перевод</li>
+    <li><strong>Сохранить</strong></li>
+  </ol>
+
+  <h3>Добавить отзыв</h3>
+  <ol class="steps">
+    <li><strong>Контент</strong> → <strong>Отзывы</strong> → «Создать»</li>
+    <li>Имя автора, текст отзыва, при желании фото и оценка звёздами</li>
+    <li>В поле <strong>«Относится к»</strong> укажите, к какому направлению относится отзыв</li>
+    <li><strong>Сохранить</strong></li>
+  </ol>
+  <p class="lead">
+    Точно так же добавляются <strong>частые вопросы</strong>, <strong>фотографии в галерею</strong>,
+    <strong>цифры</strong>, <strong>этапы истории</strong> и <strong>сертификаты</strong> — каждый в своём разделе.
+  </p>
+
+  <h3>Поменять номер телефона или ссылку на соцсеть</h3>
+  <ol class="steps">
+    <li><strong>Проекты</strong> → нужный проект → вкладка <strong>«Контакты»</strong></li>
+    <li>Номер WhatsApp — только цифры, без «+» и пробелов. Например: <code>77011234567</code></li>
+    <li>Telegram и Instagram — имя пользователя без «@»</li>
+    <li><strong>Сохранить</strong></li>
+  </ol>
+  <p class="lead">
+    Там же есть поле <strong>«текст сообщения WhatsApp»</strong> — эта фраза автоматически подставляется
+    человеку в поле ввода, когда он нажимает кнопку. Ему остаётся только отправить.
+  </p>
+
+  <!-- 5 -->
+  <h2 id="photos">5. Правила для фотографий</h2>
+
+  <div class="note">
+    <span class="note-title">Описание изображения обязательно</span>
+    <p>
+      При загрузке фото панель попросит <strong>описание</strong> — коротко, что на снимке.
+      Например: «Меруерт проводит занятие по финансовой грамотности».
+    </p>
+    <p>
+      Это не формальность: описание читают программы для незрячих людей и поисковые системы.
+      Без него сохранить не получится — так задумано.
+    </p>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Куда</th><th>Размер</th><th>Ориентация</th></tr></thead>
+      <tbody>
+        <tr><td>Ваш портрет</td><td>от 1200 × 1500</td><td>вертикальная</td></tr>
+        <tr><td>Шапка страницы проекта</td><td>от 1920 × 1080</td><td>горизонтальная</td></tr>
+        <tr><td>Тур, курс, лагерь</td><td>от 1200 × 900</td><td>горизонтальная</td></tr>
+        <tr><td>Сертификат</td><td>от 800 × 600</td><td>любая</td></tr>
+        <tr><td>Фото автора отзыва</td><td>от 200 × 200</td><td>квадратная</td></tr>
+        <tr><td>Картинка для соцсетей</td><td>1200 × 630</td><td>горизонтальная</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="lead">
+    Загружайте <strong>несжатые</strong> файлы — сайт сам уменьшит их под нужный размер.
+    Слишком маленькое фото растянется и будет выглядеть размытым.
+  </p>
+
+  <!-- 6 -->
+  <h2 id="privacy">6. Политика конфиденциальности</h2>
+
+  <div class="note note--danger">
+    <span class="note-title">Это единственная страница, где важна юридическая точность</span>
+    <p>
+      Сейчас там <strong>образец текста</strong>, а не настоящая политика. Его нужно заменить
+      до запуска сайта.
+    </p>
+    <p>
+      Я не юрист, и всё ниже — это подсказки, о чём писать, а не готовый юридический документ.
+      <strong>Покажите итоговый текст юристу</strong>, особенно если планируете принимать оплату
+      или собирать данные учеников.
+    </p>
+  </div>
+
+  <p>Где найти: <strong>Страницы</strong> → <strong>Политика конфиденциальности</strong>.</p>
+
+  <p>
+    Страница состоит из заголовка, даты обновления, вступления и шести разделов.
+    Сначала поставьте <strong>реальную дату</strong> в поле «Дата обновления» — сейчас там условная.
+  </p>
+
+  <h3>О чём писать в каждом разделе</h3>
+
+  <div class="card">
+    <p><strong>Какую информацию мы собираем.</strong> Перечислите честно: имя и телефон, которые человек
+    присылает в WhatsApp или Telegram; почту, если он пишет письмо; данные, которые собирает статистика
+    посещений, если вы её подключите.</p>
+
+    <p><strong>Как мы используем информацию.</strong> Зачем вам эти данные: ответить на вопрос, записать
+    на курс или тур, прислать расписание. Важно указать, что вы <strong>не продаёте и не передаёте</strong>
+    данные третьим лицам.</p>
+
+    <p><strong>Файлы cookie и отслеживание.</strong> Сам сайт запоминает только выбранный язык и тему
+    оформления. Если добавите аналитику — напишите, какую именно.</p>
+
+    <p><strong>Сторонние сервисы.</strong> Через что идёт общение: WhatsApp, Telegram, Instagram.
+    Стоит указать, что у них свои правила обработки данных.</p>
+
+    <p><strong>Ваши права.</strong> Человек может попросить показать, исправить или удалить свои данные.
+    Напишите, как именно — обычно достаточно написать вам на почту.</p>
+
+    <p><strong>Контакты.</strong> Куда обращаться по вопросам о данных: почта и, при желании, телефон.</p>
+  </div>
+
+  <div class="note note--warn">
+    <span class="note-title">Пишите только то, что делаете на самом деле</span>
+    <p>
+      Не копируйте политику с чужого сайта. Там будет написано про формы, рассылки и оплату,
+      которых у вас нет — а обещания в такой странице юридически вас связывают.
+    </p>
+    <p>
+      Короткий честный текст лучше длинного скопированного.
+    </p>
+  </div>
+
+  <p class="lead">
+    Раздел можно удалить, если он к вам не относится, или добавить свой — кнопки для этого есть
+    внизу списка разделов.
+  </p>
+
+  <!-- 7 -->
+  <h2 id="limits">7. Что изменить нельзя</h2>
+
+  <p class="lead">Это сделано намеренно, чтобы сайт нельзя было случайно испортить.</p>
+
+  <ul>
+    <li><strong>Цвета, шрифты и расположение блоков</strong> — оформление подобрано так, чтобы текст
+    оставался читаемым, в том числе людям со слабым зрением</li>
+    <li><strong>Адреса страниц</strong> — если их менять, старые ссылки, которые вы кому-то отправляли,
+    перестанут работать</li>
+    <li><strong>Создание новых страниц</strong> — сайт состоит из шести страниц</li>
+    <li><strong>Значок сайта во вкладке браузера</strong> — меняется программистом за пару минут,
+    когда у вас появится логотип</li>
+  </ul>
+
+  <p>Если что-то из этого понадобится — это делает разработчик, обычно быстро.</p>
+
+  <h2>Если что-то пошло не так</h2>
+
+  <div class="note">
+    <span class="note-title">Спокойно</span>
+    <p>
+      Сломать сайт через панель нельзя. Худшее, что может случиться — вы увидите не тот текст,
+      который хотели. Зайдите и исправьте, изменения снова появятся за секунды.
+    </p>
+    <p>
+      Если после сохранения на сайте ничего не поменялось — подождите полминуты и обновите страницу
+      клавишей F5. Если и это не помогло — напишите разработчику.
+    </p>
+  </div>
+
+  <footer>
+    Ничего не нужно заполнять за один раз. Начните с главной и «Обо мне» — это то, что видят первым.
+    Остальное добавляйте постепенно.
+  </footer>
+
+</div>

@@ -1,0 +1,46 @@
+<style>
+  /* ---------------------------------------------------------------------
+     Печатная версия. Шрифты — системные с полной кириллицей: Georgia для
+     заголовков, Segoe UI для текста, Consolas для примеров.
+     --------------------------------------------------------------------- */
+  :root {
+    --font-display: Georgia, "Times New Roman", serif;
+    --font-body: "Segoe UI", -apple-system, "Helvetica Neue", Arial, sans-serif;
+    --font-data: "Segoe UI Semibold", "Segoe UI", Arial, sans-serif;
+  }
+
+  @page { size: A4; margin: 16mm 15mm 17mm; }
+
+  html, body {
+    background: #fff !important;
+    font-size: 10.4pt;
+    line-height: 1.55;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .page { max-width: none; margin: 0; padding: 0; }
+
+  h1 { font-size: 30pt; letter-spacing: -0.015em; }
+  h2 { font-size: 15pt; font-weight: 700; margin-top: 1.7rem; }
+  h3 { font-size: 11.5pt; font-weight: 700; margin-top: 1.15rem; }
+  h1, h2, h3 { break-after: avoid; page-break-after: avoid; }
+
+  .standfirst { font-size: 11pt; }
+  .eyebrow { letter-spacing: 0.14em; }
+
+  /* Блоки целиком на одной странице */
+  .note, .card, .toc, table, .steps > li, footer { break-inside: avoid; page-break-inside: avoid; }
+  header { break-after: avoid; }
+  p { orphans: 3; widows: 3; }
+
+  code, .path { font-family: Consolas, "Courier New", monospace; font-size: 0.88em; white-space: normal; }
+
+  .toc a { border-bottom: none; }
+  .toc ol { columns: 2; column-gap: 1.6rem; }
+
+  table { font-size: 9.8pt; }
+  th { letter-spacing: 0.06em; }
+</style>
+</body>
+</html>

@@ -56,6 +56,7 @@ Then open:
 | `npm run seed` | Reload placeholder content (**destructive**) |
 | `npm run admin:create` | Create an admin account |
 | `npm run placeholders` | Regenerate placeholder images |
+| `npm run manual:pdf` | Rebuild the client manual PDF in `docs/handover/` |
 
 `npm run build` is not redundant with `typecheck`: `typedRoutes` generates its
 route-literal union at build time, so a mistyped `href` is only caught there.
@@ -69,22 +70,25 @@ CI (`.github/workflows/ci.yml`) runs the whole sequence on every push.
 deploy. Saving updates the live site within seconds.
 
 The panel is in Russian, and organised the way the site is:
+
 | Section in the admin | What it controls |
 | --- | --- |
-| **Проекты** | The two projects — and **this is where new tours, courses and camps are added**, under a project's *Программы* tab |
+| **Проекты** | The two projects — and **this is where new tours, courses and camps are added**, under a project's *Услуги и программы* tab |
 | **Страницы** | The headings and text on each page |
 | **Контент** | Gallery photos, reviews, FAQs, numbers, icon cards |
 | **Обо мне** | Personal details, biography, timeline, certificates |
 | **Контакты** | Social links |
 | **Медиа** | Every image |
-| **Настройки сайта** | Search/social preview text, footer, menu labels |
+| **Система** | *Настройки сайта* — search/social preview text, footer, menu labels — and the admin accounts |
 
 Each field carries a Russian description explaining what it does and where it
 appears. Every text field has three language tabs — **RU**, **EN**, **KK**. A
 field left untranslated falls back to Russian rather than rendering blank.
 
 There is a fuller walkthrough in Russian at
-[`docs/admin-guide.ru.md`](docs/admin-guide.ru.md) — hand that to the client.
+[`docs/admin-guide.ru.md`](docs/admin-guide.ru.md), and a printable version for
+the client in [`docs/handover/`](docs/handover/) — PDF plus its HTML source.
+They describe the same panel, so edit them together.
 
 ### What is deliberately not editable
 
@@ -197,6 +201,9 @@ expensive:
   drift.
 - `tests/locale-parity.test.ts` — the site's locale registry against the maps
   every locale must appear in.
+- `tests/font-subsets.test.ts` — that each font requests the Cyrillic ranges the
+  languages need. Google splits Cyrillic into two disjoint subsets, and getting
+  it wrong renders the primary language in a fallback face with no error.
 
 `npm run cms:verify` is the database-backed counterpart: it checks every
 collection, global and locale responds. It needs Postgres, so it is a script

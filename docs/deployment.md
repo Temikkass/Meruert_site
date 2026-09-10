@@ -13,7 +13,7 @@ before committing — providers change their terms.
 
 The site is no longer a folder of files. It has an admin panel, so the text
 Meruert types has to live somewhere permanent, and the photos she uploads have
-to live somewhere that survives a deploy. That is four separate things:
+to live somewhere that survives a deploy. That is five separate pieces:
 
 | Piece | Suggested | Cost at this size |
 | --- | --- | --- |
@@ -202,9 +202,11 @@ and rewrites every content collection.
 npm run launch:check
 ```
 
-Run it with the production environment loaded. It checks the four things that
-fail silently rather than loudly: placeholder domain, missing image storage,
-missing email, and a weak or development `PAYLOAD_SECRET`.
+Run it with the production environment loaded. It checks the things that fail
+silently rather than loudly: a placeholder domain, a missing database URL,
+missing image storage, missing email, and a weak or development
+`PAYLOAD_SECRET`. It also reports which of the two image-delivery modes is
+active, as a warning rather than a blocker.
 
 Then check by hand:
 

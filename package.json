@@ -23,7 +23,8 @@
     "seed": "tsx --env-file-if-exists=.env.local scripts/seed.ts",
     "launch:check": "tsx --env-file-if-exists=.env.local scripts/launch-check.ts",
     "icons": "node scripts/generate-icons.mjs",
-    "vercel-build": "payload migrate && next build --webpack"
+    "vercel-build": "payload migrate && next build --webpack",
+    "manual:pdf": "node scripts/build-manual-pdf.mjs"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "^3.88.0",
