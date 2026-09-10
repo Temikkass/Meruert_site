@@ -26,8 +26,11 @@
 import { Inter, Manrope, Plus_Jakarta_Sans } from "next/font/google";
 
 export const fontDisplay = Plus_Jakarta_Sans({
-  // Like Manrope below, Plus Jakarta Sans's Google Fonts metadata only
-  // exposes "cyrillic-ext" rather than a separate base "cyrillic" subset.
+  // Plus Jakarta Sans genuinely has no "cyrillic" subset — only "cyrillic-ext"
+  // (U+0460-052F), which holds historic and extended letters, NOT the basic
+  // Russian alphabet at U+0400-045F. Requesting it here is therefore as much
+  // Cyrillic as this family can give, and headings in Russian fall through to
+  // the metric-adjusted fallback face. See the note at the bottom of this file.
   subsets: ["latin", "cyrillic-ext"],
   weight: ["500", "600", "700", "800"],
   variable: "--font-display",
@@ -35,21 +38,41 @@ export const fontDisplay = Plus_Jakarta_Sans({
 });
 
 export const fontBody = Inter({
-  subsets: ["latin", "cyrillic"],
+  // Both Cyrillic subsets, and both are needed: "cyrillic" (U+0400-045F) is the
+  // Russian alphabet, while Kazakh's Ә Ғ Қ Ң Ө Ү Һ sit in "cyrillic-ext"
+  // (U+0460-052F). With only one of the two, words in the other script render
+  // half in Inter and half in a fallback face, mid-word.
+  subsets: ["latin", "cyrillic", "cyrillic-ext"],
   weight: ["400", "500", "600"],
   variable: "--font-body",
   display: "swap",
 });
 
 export const fontData = Manrope({
-  // Manrope's Google Fonts metadata exposes "cyrillic-ext", not a plain
-  // "cyrillic" subset (unlike Inter/Plus Jakarta Sans below) — this still
-  // covers the Cyrillic glyphs used by Russian/Kazakh nav labels and stats.
-  subsets: ["latin", "cyrillic-ext"],
+  // Manrope does have a plain "cyrillic" subset, and omitting it was a bug:
+  // nav labels, statistics and captions are Russian on the primary locale, and
+  // "cyrillic-ext" alone covers none of those letters.
+  subsets: ["latin", "cyrillic", "cyrillic-ext"],
   weight: ["500", "600", "700"],
   variable: "--font-data",
   display: "swap",
 });
+
+/**
+ * KNOWN GAP, left as a decision rather than settled here: the display face
+ * cannot render Russian or Kazakh.
+ *
+ * Plus Jakarta Sans ships no basic-Cyrillic glyphs, so on /ru and /kk every
+ * heading falls through to next/font's metric-adjusted fallback — Arial-like on
+ * Windows. Latin headings on /en are unaffected. The site's primary language is
+ * Russian, so in practice most visitors never see the display face at all.
+ *
+ * Fixing it means choosing a second display family with real Cyrillic and
+ * appending it to `--font-display` in globals.css, so browsers fall back per
+ * glyph: Latin keeps Plus Jakarta Sans, Cyrillic gets the new face. That is a
+ * visible change to the brand's typography and belongs to whoever owns the
+ * brand, which is why it is written down here rather than applied.
+ */
 
 /** Combined class string applied once, on <html>, in app/layout.tsx */
 export const fontVariables = `${fontDisplay.variable} ${fontBody.variable} ${fontData.variable}`;
