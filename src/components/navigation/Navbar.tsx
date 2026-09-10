@@ -4,9 +4,10 @@
  * components/navigation/Navbar.tsx
  * ----------------------------------------------------------------------------
  * ONE navbar, not separate desktop/mobile components — `<MobileMenu>`
- * (hidden `md:hidden`) and the inline link row (hidden below `md`) are two
+ * (hidden `xl:hidden`) and the inline link row (hidden below `xl`) are two
  * branches of the same component so header height, logo, and scroll-blur
- * state never have to be kept in sync across two files.
+ * state never have to be kept in sync across two files. The two breakpoints
+ * are opposites of each other and must be changed together.
  *
  * TRANSPARENT → GLASS ON SCROLL: `useScrolled()` flips a boolean once past
  * a small threshold; below it the bar is fully transparent (reads well
@@ -61,14 +62,35 @@ export function Navbar({
       )}
     >
       <Container>
-        <nav className="flex h-button-lg items-center justify-between" aria-label="Primary">
-          <Link href={localizedPath("/", locale) as Route} className="font-display text-body-lg font-semibold text-ink">
+        {/* `gap-6` matters as much as `justify-between` here: with only the
+            latter, a wide middle group butts straight against the wordmark on
+            one side and the language switcher on the other, with no space at
+            all. The gap is the floor that cannot be squeezed out. */}
+        <nav className="flex h-button-lg items-center justify-between gap-6" aria-label="Primary">
+          <Link
+            href={localizedPath("/", locale) as Route}
+            className="font-display text-body-lg font-semibold text-ink"
+          >
             {ownerName}
           </Link>
 
-          <div className="hidden items-center gap-8 md:flex">
+          {/* xl, not md. Two of these four labels are project NAMES from the
+              CMS, and they are long sentences in every language — "Туры,
+              языковые курсы и образовательные лагеря" alone measures 350px.
+              Measured on the built site, the row needs ~1185px of container
+              before it stops wrapping mid-label, so anything narrower than xl
+              gets the menu button instead. `whitespace-nowrap` makes a label
+              overflow rather than silently fold onto a second line inside a
+              56px bar, which is the failure this replaced. */}
+          <div className="hidden items-center gap-6 xl:flex">
             {items.map((item) => (
-              <NavLink key={item.href} item={item} locale={locale} active={pathname === item.href} />
+              <NavLink
+                key={item.href}
+                item={item}
+                locale={locale}
+                active={pathname === item.href}
+                className="whitespace-nowrap"
+              />
             ))}
           </div>
 

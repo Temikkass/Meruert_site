@@ -40,7 +40,7 @@ export function MobileMenu({
         <button
           type="button"
           aria-label="Open menu"
-          className="flex size-button-md items-center justify-center rounded-full text-ink transition-colors hover:bg-hover md:hidden"
+          className="flex size-button-md items-center justify-center rounded-full text-ink transition-colors hover:bg-hover xl:hidden"
         >
           <Menu className="size-icon-md" />
         </button>
@@ -51,7 +51,7 @@ export function MobileMenu({
           <DialogPrimitive.Portal forceMount>
             <DialogPrimitive.Overlay asChild forceMount>
               <motion.div
-                className="fixed inset-0 z-50 bg-canvas md:hidden"
+                className="fixed inset-0 z-50 bg-canvas xl:hidden"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -61,7 +61,7 @@ export function MobileMenu({
 
             <DialogPrimitive.Content asChild forceMount aria-describedby={undefined}>
               <motion.div
-                className="fixed inset-0 z-50 flex flex-col pt-[calc(env(safe-area-inset-top)+1.5rem)] pb-[calc(env(safe-area-inset-bottom)+1.5rem)] px-gutter md:hidden"
+                className="fixed inset-0 z-50 flex flex-col pt-[calc(env(safe-area-inset-top)+1.5rem)] pb-[calc(env(safe-area-inset-bottom)+1.5rem)] px-gutter xl:hidden"
                 initial={{ opacity: 0, y: -16 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -16 }}
